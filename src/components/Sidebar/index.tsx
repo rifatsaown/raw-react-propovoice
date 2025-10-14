@@ -1,17 +1,4 @@
-import { logo } from "@/assets";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  BookOpen,
-  ChevronDown,
-  ChevronUp,
-  FileInput,
-  Settings,
-  X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { logo } from '@/assets';
 import {
   AgreementIcon,
   AnalyticsIcon,
@@ -26,7 +13,20 @@ import {
   SalesPipelineIcon,
   ServicePackagesIcon,
   UserClientIcon,
-} from "../Icons";
+} from '@/components/Icons';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  FileInput,
+  Settings,
+  X,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 // Custom hook to safely use location
 const useSafeLocation = () => {
@@ -35,7 +35,7 @@ const useSafeLocation = () => {
   } catch (error) {
     console.error(error);
     // Return a default location object if useLocation fails
-    return { pathname: "/" };
+    return { pathname: '/' };
   }
 };
 
@@ -55,55 +55,55 @@ interface MenuItem {
 
 const menu: MenuSection[] = [
   {
-    label: "",
+    label: '',
     items: [
-      { icon: MyTaskIcon, title: "My Task", badge: 10, path: "/main" },
-      { icon: InboxIcon, title: "Inbox", badge: 10 },
-      { icon: AnalyticsIcon, title: "Analytics" },
+      { icon: MyTaskIcon, title: 'My Task', badge: 10, path: '/main' },
+      { icon: InboxIcon, title: 'Inbox', badge: 10 },
+      { icon: AnalyticsIcon, title: 'Analytics' },
     ],
   },
   {
-    label: "SALES",
+    label: 'SALES',
     items: [
-      { icon: SalesPipelineIcon, title: "Sales Pipeline" },
-      { icon: ProposalIcon, title: "Proposal" },
-      { icon: AgreementIcon, title: "Agreements" },
-      { icon: ServicePackagesIcon, title: "Service Packages" },
+      { icon: SalesPipelineIcon, title: 'Sales Pipeline' },
+      { icon: ProposalIcon, title: 'Proposal' },
+      { icon: AgreementIcon, title: 'Agreements' },
+      { icon: ServicePackagesIcon, title: 'Service Packages' },
     ],
   },
   {
-    label: "FULFILMENT",
+    label: 'FULFILMENT',
     items: [
-      { icon: InvoicesIcon, title: "Invoices" },
-      { icon: OrdersIcon, title: "Orders" },
-      { icon: FolderPlusIcon, title: "Request", badge: 10 },
+      { icon: InvoicesIcon, title: 'Invoices' },
+      { icon: OrdersIcon, title: 'Orders' },
+      { icon: FolderPlusIcon, title: 'Request', badge: 10 },
       {
         icon: FolderShieldIcon,
-        title: "Project",
+        title: 'Project',
         items: [
-          { icon: FileInput, title: "Request", badge: 10 },
-          { icon: FileInput, title: "Request", badge: 10 },
+          { icon: FileInput, title: 'Request', badge: 10 },
+          { icon: FileInput, title: 'Request', badge: 10 },
         ],
       },
     ],
   },
   {
-    label: "ENGAGEMENT",
+    label: 'ENGAGEMENT',
     items: [
-      { icon: UserClientIcon, title: "Client Portal" },
+      { icon: UserClientIcon, title: 'Client Portal' },
       {
         icon: BookOpen,
-        title: "Contact Book",
+        title: 'Contact Book',
         active: true,
-        path: "/main/contact-book",
+        path: '/main/contact-book',
       }, // TODO: Remove Active
     ],
   },
   {
-    label: "CUSTOMIZATION",
+    label: 'CUSTOMIZATION',
     items: [
-      { icon: DataflowIcon, title: "Automation" },
-      { icon: Settings, title: "Settings" },
+      { icon: DataflowIcon, title: 'Automation' },
+      { icon: Settings, title: 'Settings' },
     ],
   },
 ];
@@ -127,27 +127,27 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   // Handle escape key to close sidebar
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen) {
+      if (event.key === 'Escape' && isOpen) {
         onToggle();
       }
     };
 
     if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
+      document.addEventListener('keydown', handleEscape);
       // Only prevent body scroll on mobile devices
       if (window.innerWidth < 1024) {
-        document.body.style.overflow = "hidden";
-        document.body.style.paddingRight = "0px"; // Prevent layout shift
+        document.body.style.overflow = 'hidden';
+        document.body.style.paddingRight = '0px'; // Prevent layout shift
       }
     } else {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
     }
 
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
     };
   }, [isOpen, onToggle]);
 
@@ -167,12 +167,12 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   // Function to determine badge color based on item title
   const getBadgeColorClass = (title: string) => {
     switch (title.toLowerCase()) {
-      case "inbox":
-        return "border-[#009B6A] bg-[#EBFEF5] text-[#067647]";
-      case "request":
-        return "border-[#F9DBAF] bg-[#FEF6EE] text-[#B93815]";
+      case 'inbox':
+        return 'border-[#009B6A] bg-[#EBFEF5] text-[#067647]';
+      case 'request':
+        return 'border-[#F9DBAF] bg-[#FEF6EE] text-[#B93815]';
       default:
-        return "border-[#E4E4E7] bg-[#F8FAFC] text-[#18181B]";
+        return 'border-[#E4E4E7] bg-[#F8FAFC] text-[#18181B]';
     }
   };
 
@@ -200,13 +200,14 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           fixed lg:static inset-y-0 left-0 z-50
           w-64 h-screen border-r border-[#E4E4E7] bg-white font-['Inter']
           transform transition-transform duration-300 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           lg:relative lg:transform-none
           shadow-lg lg:shadow-none
           overflow-hidden
         `}
         role="navigation"
-        aria-label="Main navigation">
+        aria-label="Main navigation"
+      >
         {/* Header with close button for mobile */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center">
@@ -218,7 +219,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
             size="icon"
             className="lg:hidden h-8 w-8"
             onClick={onToggle}
-            aria-label="Close sidebar">
+            aria-label="Close sidebar"
+          >
             <X className="w-4 h-4" />
           </Button>
         </div>
@@ -239,9 +241,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                         to={item.path}
                         onClick={handleLinkClick}
                         className={`flex items-center gap-3 px-3 h-[28px] text-sm rounded-md cursor-pointer transition-colors hover:bg-muted text-[#09090B] font-medium ${
-                          item.active ? "bg-muted font-semibold" : ""
+                          item.active ? 'bg-muted font-semibold' : ''
                         }`}
-                        aria-current={item.active ? "page" : undefined}>
+                        aria-current={item.active ? 'page' : undefined}
+                      >
                         <item.icon className="w-4 h-4 text-muted-foreground" />
                         <span className="flex-1 truncate">{item.title}</span>
                         {item.badge && (
@@ -249,9 +252,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                             variant="outline"
                             className={`text-xs px-2 py-0.5 ${
                               item.active
-                                ? "border-black"
+                                ? 'border-black'
                                 : getBadgeColorClass(item.title)
-                            }`}>
+                            }`}
+                          >
                             {item.badge}
                           </Badge>
                         )}
@@ -262,13 +266,14 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                           item.items && toggleExpand(sectionIndex, itemIndex)
                         }
                         className={`flex items-center gap-3 px-3 h-[28px] text-sm rounded-md cursor-pointer transition-colors hover:bg-muted text-[#09090B] font-medium w-full text-left ${
-                          item.active ? "bg-muted font-semibold" : ""
+                          item.active ? 'bg-muted font-semibold' : ''
                         }`}
                         aria-expanded={
                           item.items
                             ? isExpanded(sectionIndex, itemIndex)
                             : undefined
-                        }>
+                        }
+                      >
                         <item.icon className="w-4 h-4 text-muted-foreground" />
                         <span className="flex-1 truncate">{item.title}</span>
                         {item.badge && (
@@ -276,9 +281,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                             variant="outline"
                             className={`text-xs px-2 py-0.5 ${
                               item.active
-                                ? "border-black"
+                                ? 'border-black'
                                 : getBadgeColorClass(item.title)
-                            }`}>
+                            }`}
+                          >
                             {item.badge}
                           </Badge>
                         )}
@@ -299,11 +305,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                               to={subItem.path}
                               onClick={handleLinkClick}
                               className={`flex items-center gap-3 px-3 h-[28px] text-sm rounded-md cursor-pointer transition-colors hover:bg-muted text-[#09090B] font-medium ${
-                                subItem.active ? "bg-muted" : ""
+                                subItem.active ? 'bg-muted' : ''
                               }`}
-                              aria-current={
-                                subItem.active ? "page" : undefined
-                              }>
+                              aria-current={subItem.active ? 'page' : undefined}
+                            >
                               <subItem.icon className="w-4 h-4 text-muted-foreground" />
                               <span className="flex-1 truncate">
                                 {subItem.title}
@@ -313,9 +318,10 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                                   variant="outline"
                                   className={`text-xs px-1.5 py-0.5 ${
                                     subItem.active
-                                      ? "border-black"
+                                      ? 'border-black'
                                       : getBadgeColorClass(subItem.title)
-                                  }`}>
+                                  }`}
+                                >
                                   {subItem.badge}
                                 </Badge>
                               )}
@@ -324,8 +330,9 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                             <div
                               key={subIndex}
                               className={`flex items-center gap-3 px-3 h-[28px] text-sm rounded-md cursor-pointer transition-colors hover:bg-muted text-[#09090B] font-medium ${
-                                subItem.active ? "bg-muted" : ""
-                              }`}>
+                                subItem.active ? 'bg-muted' : ''
+                              }`}
+                            >
                               <subItem.icon className="w-4 h-4 text-muted-foreground" />
                               <span className="flex-1 truncate">
                                 {subItem.title}
@@ -335,14 +342,15 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                                   variant="outline"
                                   className={`text-xs px-1.5 py-0.5 ${
                                     subItem.active
-                                      ? "border-black"
+                                      ? 'border-black'
                                       : getBadgeColorClass(subItem.title)
-                                  }`}>
+                                  }`}
+                                >
                                   {subItem.badge}
                                 </Badge>
                               )}
                             </div>
-                          ),
+                          )
                         )}
                       </div>
                     )}
