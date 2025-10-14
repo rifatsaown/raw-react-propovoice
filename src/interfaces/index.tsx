@@ -30,4 +30,20 @@ interface MenuItem {
     fallback: string;
   }
 
-  export type { MenuItem, MenuSection, IconProps, Contact };
+  interface Attachment {
+    id: string;
+    kind: 'image' | 'file';
+    src?: string;
+    name: string;
+  }
+  
+  interface NoteItem {
+    id: string;
+    author: { name: string; avatar: string };
+    timestamp: string;
+    text: string;
+    attachments?: Attachment[];
+    tint?: 'default' | 'muted';
+  }
+
+  export type { MenuItem, MenuSection, IconProps, Contact, Attachment, NoteItem };

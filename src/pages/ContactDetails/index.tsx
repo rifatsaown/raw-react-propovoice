@@ -17,7 +17,7 @@ import ConversationTab from './TabsData/ConversationTab';
 import DealsTab from './TabsData/DealsTab';
 import FilesTab from './TabsData/FilesTab';
 import InvoiceTab from './TabsData/InvoiceTab';
-import NotesTab from './TabsData/NotesTab';
+import NotesTab from './TabsData/NoteTab';
 import OrdersTab from './TabsData/OrdersTab';
 import OverviewTab from './TabsData/OverviewTab/index';
 import ProjectTab from './TabsData/ProjectTab';
@@ -149,7 +149,9 @@ export default function ContactDetails() {
 
     return (
       <Suspense fallback={<TabContentLoader />}>
-        <TabComponent contact={mockContact} />
+        <div className="p-6 min-h-screen lg:mx-15">
+          <TabComponent contact={mockContact} />
+        </div>
       </Suspense>
     );
   }, []);

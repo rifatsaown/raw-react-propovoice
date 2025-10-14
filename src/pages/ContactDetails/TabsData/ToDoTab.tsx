@@ -36,7 +36,7 @@ export default function ToDoTab() {
   const [unscheduledExpanded, setUnscheduledExpanded] = useState(false);
 
   return (
-    <div className="p-6 min-h-screen lg:mx-15">
+    <>
       {/* Header */}
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex justify-between items-center">
@@ -610,6 +610,6 @@ export default function ToDoTab() {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

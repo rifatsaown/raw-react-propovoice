@@ -4,7 +4,7 @@ import OverviewTodo from './OverviewTodo';
 
 export default function OverviewTab() {
   return (
-    <div className="p-6 min-h-screen lg:mx-15">
+    <>
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold text-[#18181B]">Overview</h1>
@@ -28,6 +28,6 @@ export default function OverviewTab() {
         {/* Right Column - Contact Info */}
         <BasicInfo />
       </div>
-    </div>
+    </>
   );
 }
