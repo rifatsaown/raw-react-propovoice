@@ -1,9 +1,9 @@
 import { avatar as avatarImg } from '@/assets';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/Components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
-import { Checkbox } from '@/Components/ui/checkbox';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Components/ui/table';
+} from '@/components/ui/table';
 import {
   Calendar,
   CheckSquare,

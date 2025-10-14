@@ -1,5 +1,5 @@
-import { Badge } from '@/Components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Briefcase,
   Eye,

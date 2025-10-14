@@ -1,5 +1,5 @@
-import Sidebar from "@/Components/Sidebar";
-import { Button } from "@/Components/ui/button";
+import Sidebar from "@/components/Sidebar";
+import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";

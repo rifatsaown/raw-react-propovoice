@@ -1,8 +1,10 @@
-const createIconComponent = (src: string, altText: string) => {
+import type { IconProps } from '@/interfaces';
+
+const CreateIconComponent = (src: string, altText: string) => {
   const IconComponent: React.FC<IconProps> = ({
     size = 24,
-    color = "currentColor",
-    className = "",
+    color = 'currentColor',
+    className = '',
   }) => (
     <img
       src={src}
@@ -17,4 +19,4 @@ const createIconComponent = (src: string, altText: string) => {
   return IconComponent;
 };
 
-export default createIconComponent;
+export default CreateIconComponent;

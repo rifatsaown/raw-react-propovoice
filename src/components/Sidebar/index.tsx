@@ -1,7 +1,7 @@
 import { logo } from "@/assets";
-import { Badge } from "@/Components/ui/badge";
-import { Button } from "@/Components/ui/button";
-import { ScrollArea } from "@/Components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   BookOpen,
   ChevronDown,
@@ -33,6 +33,7 @@ const useSafeLocation = () => {
   try {
     return useLocation();
   } catch (error) {
+    console.error(error);
     // Return a default location object if useLocation fails
     return { pathname: "/" };
   }

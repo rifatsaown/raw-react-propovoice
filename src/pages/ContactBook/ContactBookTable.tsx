@@ -1,13 +1,13 @@
-import { WhatsappIcon } from "@/Components/Icons";
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
-import { Button } from "@/Components/ui/button";
-import { Checkbox } from "@/Components/ui/checkbox";
+import { WhatsappIcon } from '@/components/Icons';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   Table,
   TableBody,
@@ -15,7 +15,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
+} from '@/components/ui/table';
+import type { Contact } from '@/interfaces';
 import {
   ChevronsUpDown,
   Ellipsis,
@@ -25,40 +26,40 @@ import {
   PhoneCall,
   Rocket,
   Trash2,
-} from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+} from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 // Function to get contact type styling based on type
 function getContactTypeStyle(type: string): string {
   switch (type) {
-    case "Client":
-      return "bg-[#009B6A]";
-    case "Lead":
-      return "bg-[#F4A462]";
-    case "Prospect":
-      return "bg-blue-500";
-    case "Partner":
-      return "bg-purple-500";
-    case "Vendor":
-      return "bg-orange-500";
-    case "Affiliate":
-      return "bg-yellow-500";
+    case 'Client':
+      return 'bg-[#009B6A]';
+    case 'Lead':
+      return 'bg-[#F4A462]';
+    case 'Prospect':
+      return 'bg-blue-500';
+    case 'Partner':
+      return 'bg-purple-500';
+    case 'Vendor':
+      return 'bg-orange-500';
+    case 'Affiliate':
+      return 'bg-yellow-500';
     default:
-      return "bg-gray-500";
+      return 'bg-gray-500';
   }
 }
 // Generate lots of dummy contacts
 function makeContacts(count: number): Contact[] {
   return Array.from({ length: count }, (_, i) => ({
     id: i + 1,
-    name: "Nasir Uddin",
+    name: 'Nasir Uddin',
     email: `nurencydigital${i}@gmail.com`,
-    phone: "+8801760706361",
-    org: "Nurency",
-    type: i % 3 === 0 ? "Lead" : "Client",
+    phone: '+8801760706361',
+    org: 'Nurency',
+    type: i % 3 === 0 ? 'Lead' : 'Client',
     avatar: null,
-    fallback: "N",
+    fallback: 'N',
   }));
 }
 
@@ -74,7 +75,7 @@ export default function ContactTable() {
   const pageCount = Math.ceil(allContacts.length / rowsPerPage);
   const paginated = allContacts.slice(
     (page - 1) * rowsPerPage,
-    page * rowsPerPage,
+    page * rowsPerPage
   );
 
   function goToPage(p: number) {
@@ -134,43 +135,49 @@ export default function ContactTable() {
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
           selectedRows.length > 0
-            ? "max-h-20 opacity-100"
-            : "max-h-0 opacity-0 mb-0"
-        }`}>
+            ? 'max-h-20 opacity-100'
+            : 'max-h-0 opacity-0 mb-0'
+        }`}
+      >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Button
               size="sm"
               variant="outline"
-              className="flex items-center gap-1 bg-[#71717A] text-white rounded-[8px]">
+              className="flex items-center gap-1 bg-[#71717A] text-white rounded-[8px]"
+            >
               <Rocket className="w-4 h-4" />
               Send Mail
             </Button>
             <Button
               size="sm"
               variant="ghost"
-              className="flex items-center gap-1">
+              className="flex items-center gap-1"
+            >
               <FolderSymlink className="w-4 h-4" />
               Add to List
             </Button>
             <Button
               size="sm"
               variant="ghost"
-              className="flex items-center gap-1">
+              className="flex items-center gap-1"
+            >
               <MailCheck className="w-4 h-4" />
               Send a Mail
             </Button>
             <Button
               size="sm"
               variant="ghost"
-              className="flex items-center gap-1">
+              className="flex items-center gap-1"
+            >
               <WhatsappIcon className="w-4 h-4" />
               Send WhatsApp Message
             </Button>
             <Button
               size="sm"
               variant="ghost"
-              className="flex items-center gap-1 text-red-500 hover:text-red-600 hover:bg-red-50">
+              className="flex items-center gap-1 text-red-500 hover:text-red-600 hover:bg-red-50"
+            >
               <Trash2 className="w-4 h-4" />
               Delete
             </Button>
@@ -185,7 +192,7 @@ export default function ContactTable() {
               <TableHead className="flex items-center gap-2 px-4">
                 <Checkbox
                   checked={
-                    allSelected ? true : someSelected ? "indeterminate" : false
+                    allSelected ? true : someSelected ? 'indeterminate' : false
                   }
                   onCheckedChange={toggleAllRows}
                 />
@@ -234,7 +241,10 @@ export default function ContactTable() {
                       )}
                     </Avatar>
                     <div className="space-y-0.5">
-                      <Link to={`/contact-details/${contact.id}`} className="text-sm font-medium leading-none">
+                      <Link
+                        to={`/contact-details/${contact.id}`}
+                        className="text-sm font-medium leading-none"
+                      >
                         {contact.name}
                       </Link>
                       <p className="text-xs text-muted-foreground">
@@ -250,8 +260,9 @@ export default function ContactTable() {
                 <TableCell>
                   <span
                     className={`px-2 py-0.5 text-xs font-medium text-white rounded-full ${getContactTypeStyle(
-                      contact.type,
-                    )}`}>
+                      contact.type
+                    )}`}
+                  >
                     {contact.type}
                   </span>
                 </TableCell>
@@ -268,7 +279,8 @@ export default function ContactTable() {
                         <Button
                           size="icon"
                           variant="outline"
-                          className="h-8 w-8">
+                          className="h-8 w-8"
+                        >
                           <Ellipsis className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -296,7 +308,8 @@ export default function ContactTable() {
             onChange={(e) => {
               setRowsPerPage(Number(e.target.value));
               setPage(1);
-            }}>
+            }}
+          >
             {ROW_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>
                 {opt}
@@ -307,7 +320,7 @@ export default function ContactTable() {
 
         <div>
           Total Contact {(page - 1) * rowsPerPage + 1}–
-          {Math.min(page * rowsPerPage, allContacts.length)} of{" "}
+          {Math.min(page * rowsPerPage, allContacts.length)} of{' '}
           {allContacts.length}
         </div>
 
@@ -316,7 +329,8 @@ export default function ContactTable() {
             variant="ghost"
             size="sm"
             disabled={page === 1}
-            onClick={() => goToPage(page - 1)}>
+            onClick={() => goToPage(page - 1)}
+          >
             &lt; Previous
           </Button>
           {page > 2 && (
@@ -330,10 +344,11 @@ export default function ContactTable() {
           {pageButtons.map((p) => (
             <Button
               key={p}
-              variant={p === page ? "default" : "ghost"}
+              variant={p === page ? 'default' : 'ghost'}
               size="sm"
               onClick={() => goToPage(p)}
-              className={p === page ? "font-bold" : ""}>
+              className={p === page ? 'font-bold' : ''}
+            >
               {p}
             </Button>
           ))}
@@ -343,7 +358,8 @@ export default function ContactTable() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => goToPage(pageCount)}>
+                onClick={() => goToPage(pageCount)}
+              >
                 {pageCount}
               </Button>
             </>
@@ -352,7 +368,8 @@ export default function ContactTable() {
             variant="ghost"
             size="sm"
             disabled={page === pageCount}
-            onClick={() => goToPage(page + 1)}>
+            onClick={() => goToPage(page + 1)}
+          >
             Next &gt;
           </Button>
         </div>
