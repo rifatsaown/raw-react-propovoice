@@ -1,6 +1,6 @@
 import ActivityHistory from './ActivityHistory';
 import BasicInfo from './BasicInfo';
-import Todo from './Todo';
+import OverviewTodo from './OverviewTodo';
 
 export default function OverviewTab() {
   return (
@@ -22,7 +22,7 @@ export default function OverviewTab() {
           {/* Activity History */}
           <ActivityHistory />
           {/* To Do Section */}
-          <Todo />
+          <OverviewTodo />
         </div>
 
         {/* Right Column - Contact Info */}

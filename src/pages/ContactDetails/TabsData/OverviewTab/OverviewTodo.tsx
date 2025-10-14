@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-function Todo() {
+function OverviewTodo() {
   const [todayExpanded, setTodayExpanded] = useState(true);
   const [overdueExpanded, setOverdueExpanded] = useState(false);
   const [nextExpanded, setNextExpanded] = useState(false);
@@ -259,4 +259,4 @@ function Todo() {
   );
 }
 
-export default Todo;
+export default OverviewTodo;
