@@ -34,7 +34,6 @@ interface Contact {
   phone: string;
   avatar?: string;
 }
-
 interface TabItem {
   value: string;
   label: string;
