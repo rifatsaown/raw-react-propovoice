@@ -1,3 +1,4 @@
+import { agreementThumbnail, proposalThumbnail } from '@/assets';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -130,8 +131,42 @@ export default function ProposalTab() {
         </DropdownMenu>
       </div>
 
-      <div>
-        hi
+      {/* Most Recent */}
+      <div className="bg-white rounded-lg px-4 py-3 mb-4">
+        <div className="text-sm font-medium text-gray-700 mb-3">
+          Most Recent
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-xl border border-[#E4E4E7] bg-white overflow-hidden"
+            >
+              <div className="h-28 bg-[#F4F4F5] flex items-center justify-center">
+                <img
+                  src={i % 2 === 0 ? proposalThumbnail : agreementThumbnail}
+                  alt="thumbnail"
+                  className="h-14 w-auto"
+                />
+              </div>
+              <div className="border-t border-[#E4E4E7] p-4">
+                <button className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md bg-[#BAE6FD] text-[#006BFF] text-[12px] font-medium">
+                  Sent
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+                <div className="mt-2 text-[15px] leading-6 font-semibold text-[#0A0A0A] line-clamp-2">
+                  Proposal Taxbia Foundation Onboardwebsite Test...
+                </div>
+                <div className="mt-3 text-[13px] text-[#71717A]">
+                  Last Update:
+                </div>
+                <div className="text-[13px] text-[#3F3F46]">
+                  Today - 2pm, 20 Dec 2024
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="bg-white rounded-lg px-4 py-3">
