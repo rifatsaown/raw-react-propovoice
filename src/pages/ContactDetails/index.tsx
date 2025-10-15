@@ -148,7 +148,7 @@ export default function ContactDetails() {
 
     return (
       <Suspense fallback={<TabContentLoader />}>
-        <div className="p-6 min-h-screen lg:mx-15">
+        <div className="p-4 sm:p-6 min-h-screen lg:mx-15">
           <TabComponent contact={mockContact} />
         </div>
       </Suspense>
@@ -167,7 +167,7 @@ export default function ContactDetails() {
               className="overflow-x-auto scrollbar-hide "
               style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              <TabsList className="flex  w-max bg-transparent border-none px-16 h-auto min-h-[50px]">
+              <TabsList className="flex  w-max bg-transparent border-none px-4 sm:px-16 h-auto min-h-[50px]">
                 {tabData.map((tab) => (
                   <TabsTrigger
                     key={tab.value}

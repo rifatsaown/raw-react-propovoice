@@ -144,17 +144,17 @@ export default function OverviewTab() {
   return (
     <>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl text-[#18181B]">Overview</h1>
-        <div className="flex items-center gap-4">
-          <div className="text-sm flex items-center gap-1">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6">
+        <h1 className="text-xl sm:text-2xl text-[#18181B]">Overview</h1>
+        <div className="w-full sm:w-auto flex items-center gap-2 sm:gap-4 justify-between sm:justify-end flex-wrap">
+          <div className="text-xs sm:text-sm flex items-center gap-1">
             <Clock strokeWidth={1} className="w-4 h-4" />{' '}
             <span className="text-[#71717A]">Last Modified on</span>
             <span className="text-[#18181B] font-semibold">
               Today, 12:08 PM
             </span>
           </div>
-          <button className="bg-[#71717A] text-white px-4 py-2 rounded-md text-sm flex items-center gap-1">
+          <button className="bg-[#71717A] text-white h-8 sm:h-9 px-3 sm:px-4 rounded-md text-xs sm:text-sm flex items-center gap-1">
             Create{' '}
             <svg
               className="w-4 h-4"
@@ -173,7 +173,7 @@ export default function OverviewTab() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left Column - Activity */}
         <div className="lg:col-span-2 space-y-1">
           {/* Activity History */}

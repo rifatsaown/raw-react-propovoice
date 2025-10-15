@@ -1,14 +1,14 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   ChevronLeft,
   Globe,
   MailPlus,
   MoreHorizontal,
   PhoneCall,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export interface ContactDetailsHeaderProps {
   contact: {
@@ -36,7 +36,8 @@ export default function ContactDetailsHeader({
           size="icon"
           className="h-7 w-7 sm:h-8 sm:w-8"
           onClick={() => navigate(-1)}
-          aria-label="Go back">
+          aria-label="Go back"
+        >
           <ChevronLeft className="w-4 h-4 text-muted-foreground" />
         </Button>
         <span className="text-gray-600 font-medium text-sm sm:text-base">
@@ -54,9 +55,9 @@ export default function ContactDetailsHeader({
             ) : (
               <AvatarFallback className="text-sm sm:text-base">
                 {contact.name
-                  ?.split(" ")
+                  ?.split(' ')
                   .map((n) => n[0])
-                  .join("")}
+                  .join('')}
               </AvatarFallback>
             )}
           </Avatar>
@@ -65,7 +66,7 @@ export default function ContactDetailsHeader({
               <h1 className="font-semibold text-base sm:text-lg text-gray-800 truncate">
                 {contact.name}
               </h1>
-              <Badge className="bg-[#009B6A] text-white font-medium text-xs sm:text-sm w-fit">
+              <Badge className="bg-[#009B6A] text-white font-medium text-xs sm:text-sm w-fit shrink-0">
                 {contact.type}
               </Badge>
             </div>
@@ -76,11 +77,12 @@ export default function ContactDetailsHeader({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+        <div className="flex items-center gap-1 sm:gap-2 flex-wrap w-full sm:w-auto justify-between sm:justify-end overflow-x-auto">
           {/* Primary Action - Send Mail */}
           <Button
             className="h-9 sm:h-10 gap-1 sm:gap-2 bg-[#009B6A] hover:bg-green-700 rounded-[8px] text-xs sm:text-sm flex-1 sm:flex-none min-w-[100px] sm:min-w-[120px]"
-            size="sm">
+            size="sm"
+          >
             <MailPlus className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="hidden sm:inline">Send Mail</span>
             <span className="sm:hidden">Mail</span>
@@ -92,28 +94,32 @@ export default function ContactDetailsHeader({
               variant="outline"
               size="icon"
               className="h-9 w-9 sm:h-10 sm:w-10"
-              aria-label="Send message">
+              aria-label="Send message"
+            >
               <MailPlus className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
             <Button
               variant="outline"
               size="icon"
               className="h-9 w-9 sm:h-10 sm:w-10"
-              aria-label="Visit website">
+              aria-label="Visit website"
+            >
               <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
             <Button
               variant="outline"
               size="icon"
               className="h-9 w-9 sm:h-10 sm:w-10"
-              aria-label="Call contact">
+              aria-label="Call contact"
+            >
               <PhoneCall className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
             <Button
               variant="outline"
               size="icon"
               className="h-9 w-9 sm:h-10 sm:w-10"
-              aria-label="More options">
+              aria-label="More options"
+            >
               <MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
           </div>

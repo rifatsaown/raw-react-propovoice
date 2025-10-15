@@ -171,7 +171,7 @@ const ActivityHistory = ({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
       <h2 className="text-xl mb-6 text-[#18181B] font-[500]">
         Activity History
       </h2>
@@ -179,17 +179,22 @@ const ActivityHistory = ({
       {/* Timeline */}
       <div className="relative">
         {/* Continuous vertical line for entire timeline */}
-        <div className="absolute left-[123px] top-0 bottom-0 w-[1px] bg-gray-200"></div>
+        <div className="hidden md:block absolute left-[123px] top-0 bottom-0 w-[1px] bg-gray-200"></div>
 
         <div className="space-y-0">
-          {activityData.map((group) => (
+          {activityData.map((group, groupIndex) => (
             <div key={group.period}>
               {group.activities.map((activity, activityIndex) => (
-                <div key={activity.id} className="flex gap-6">
+                <div
+                  key={activity.id}
+                  className="flex flex-col md:flex-row gap-3 md:gap-6"
+                >
                   {/* Time period label - only show for first activity in group */}
                   {activityIndex === 0 && (
-                    <div className="w-20 flex-shrink-0 pt-1">
-                      <span className={`text-sm font-medium text-[#71717A]`}>
+                    <div className="md:w-20 flex-shrink-0 pt-1">
+                      <span
+                        className={`text-xs md:text-sm font-medium text-[#71717A]`}
+                      >
                         {group.period}
                       </span>
                     </div>
@@ -197,20 +202,20 @@ const ActivityHistory = ({
 
                   {/* Empty space for subsequent activities in the same group */}
                   {activityIndex > 0 && (
-                    <div className="w-20 flex-shrink-0"></div>
+                    <div className="hidden md:block w-20 flex-shrink-0"></div>
                   )}
 
                   {/* Icon column */}
-                  <div className="w-10 flex-shrink-0 flex flex-col items-center">
+                  <div className="hidden md:flex md:w-10 flex-shrink-0 md:flex-col items-center">
                     <div className="w-8 h-8 bg-[#F4F4F5] rounded-full border-gray-200 flex items-center justify-center relative z-10">
                       <TextFileIcon className="w-4 h-4" />
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1 pb-6">
+                  <div className="flex-1 pb-6 md:pl-0">
                     <h3
-                      className="text-base font-normal text-gray-900 mb-1"
+                      className="text-sm md:text-base font-normal text-gray-900 mb-1"
                       dangerouslySetInnerHTML={{ __html: activity.title }}
                     ></h3>
 
@@ -224,7 +229,7 @@ const ActivityHistory = ({
                       </div>
                     )}
 
-                    <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-3 md:gap-4 text-xs md:text-sm flex-wrap justify-between md:justify-start">
                       <span className="text-[#71717A]">
                         {activity.timestamp}
                       </span>
@@ -239,8 +244,14 @@ const ActivityHistory = ({
                       ))}
                     </div>
                   </div>
+                  {activityIndex < group.activities.length - 1 && (
+                    <div className="md:hidden w-full h-px bg-gray-200 mt-3" />
+                  )}
                 </div>
               ))}
+              {groupIndex < activityData.length - 1 && (
+                <div className="md:hidden w-full h-px bg-gray-300 my-3" />
+              )}
             </div>
           ))}
         </div>
