@@ -15,6 +15,8 @@ import userClient from './assets/userClient.svg';
 import whatsapp from './assets/whatsapp.svg';
 import textFile from './assets/textFile.svg';
 import highFlag from './assets/highFlag.svg';
+import lowFlag from './assets/lowFlag.svg';
+// import mediumFlag from './assets/mediumFlag.svg';
 import CreateIconComponent from './CreateIconComponent';
 
 // Create icon components using the factory function
@@ -44,6 +46,8 @@ export const BriefcaseIcon = CreateIconComponent(briefcase, 'Briefcase');
 export const WhatsappIcon = CreateIconComponent(whatsapp, 'Whatsapp');
 export const TextFileIcon = CreateIconComponent(textFile, 'Text File');
 export const HighFlagIcon = CreateIconComponent(highFlag, 'High Flag');
+export const LowFlagIcon = CreateIconComponent(lowFlag, 'Low Flag');
+// export const MediumFlagIcon = CreateIconComponent(mediumFlag, 'Medium Flag');
 
 // Export all icons as a collection
 const Icons = {
@@ -64,6 +68,8 @@ const Icons = {
   WhatsappIcon,
   TextFileIcon,
   HighFlagIcon,
+  LowFlagIcon,
+  // MediumFlagIcon,
 };
 
 export default Icons;

@@ -1,3 +1,4 @@
+import { HighFlagIcon, LowFlagIcon } from '@/components/Icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -7,15 +8,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import type { TodoGroup, TodoItem, User } from '@/interfaces';
 import {
-  CheckSquare,
   ChevronDown,
   ChevronUp,
-  Flag,
   Mail,
   MoreVertical,
-  Phone,
+  PhoneCall,
+  SquareCheck,
   Users,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -110,28 +118,28 @@ function OverviewTodo({ user }: OverviewTodoProps) {
   const getActivityIcon = (type: TodoItem['activityType']) => {
     switch (type) {
       case 'call':
-        return <Phone className="w-3.5 h-3.5" />;
+        return <PhoneCall className="w-3.5 h-3.5" />;
       case 'task':
-        return <CheckSquare className="w-3.5 h-3.5" />;
+        return <SquareCheck className="w-3.5 h-3.5" />;
       case 'meeting':
         return <Users className="w-3.5 h-3.5" />;
       case 'email':
         return <Mail className="w-3.5 h-3.5" />;
       default:
-        return <CheckSquare className="w-3.5 h-3.5" />;
+        return <SquareCheck className="w-3.5 h-3.5" />;
     }
   };
 
   const getPriorityColor = (priority: TodoItem['priority']) => {
     switch (priority) {
       case 'H':
-        return 'text-red-500 fill-red-500';
+        return <HighFlagIcon className="w-6 h-6" />;
       case 'M':
-        return 'text-yellow-500 fill-yellow-500';
+        return <LowFlagIcon className="w-6 h-6" />;
       case 'L':
-        return 'text-green-500 fill-green-500';
+        return <LowFlagIcon className="w-6 h-6" />;
       default:
-        return 'text-gray-500 fill-gray-500';
+        return <LowFlagIcon className="w-6 h-6" />;
     }
   };
 
@@ -140,7 +148,7 @@ function OverviewTodo({ user }: OverviewTodoProps) {
       case 'upcoming':
         return 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600';
       case 'doing':
-        return 'bg-purple-600 text-white border-purple-600 hover:bg-purple-600';
+        return 'bg-[#7A5AF8] text-white border-purple-600 hover:bg-purple-600';
       case 'completed':
         return 'bg-green-600 text-white border-green-600 hover:bg-green-600';
       default:
@@ -149,77 +157,88 @@ function OverviewTodo({ user }: OverviewTodoProps) {
   };
 
   const renderTodoItem = (item: TodoItem) => (
-    <div
-      key={item.id}
-      className="grid grid-cols-[20px_1fr_120px_72px_120px_32px] gap-6 items-center py-4 border-b border-gray-100 last:border-b-0"
-    >
-      <Checkbox checked={item.completed} className="justify-self-center" />
-
-      <div className="space-y-1">
-        <h3 className="text-base font-normal text-gray-900">{item.title}</h3>
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          <span>
-            Due Date <span className="text-gray-900">{item.dueDate}</span>
-          </span>
-          {item.relationTo && (
-            <span>
-              Relation to:{' '}
-              <span className="text-gray-900">{item.relationTo}</span>
-            </span>
-          )}
+    <TableRow key={item.id} className="hover:bg-transparent">
+      <TableCell className="w-[20px] align-middle">
+        <div className="flex justify-center">
+          <Checkbox />
         </div>
-      </div>
-
-      <Badge
-        variant="outline"
-        className="border-gray-300 bg-white text-gray-700 font-normal gap-2 justify-self-center"
-      >
-        {getActivityIcon(item.activityType)}
-        {item.activityType.charAt(0).toUpperCase() + item.activityType.slice(1)}
-      </Badge>
-
-      <div className="flex items-center gap-1 justify-self-center">
-        <Flag className={`w-4 h-4 ${getPriorityColor(item.priority)}`} />
-        <span className="text-sm font-semibold text-gray-900">
-          {item.priority}
-        </span>
-      </div>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
+      </TableCell>
+      <TableCell className="align-middle">
+        <div className="">
+          <h3 className="text-base font-normal text-[#2D2D3E]">{item.title}</h3>
+          <div className="flex items-center gap-4 text-sm text-[#71717A]">
+            <span>
+              Due Date{' '}
+              <span className="text-black font-medium">{item.dueDate}</span>
+            </span>
+            {item.relationTo && (
+              <span>
+                Relation to:{' '}
+                <span className="text-black font-medium">
+                  {item.relationTo}
+                </span>
+              </span>
+            )}
+          </div>
+        </div>
+      </TableCell>
+      <TableCell className="align-middle">
+        <div className="flex justify-center">
+          <Badge
             variant="outline"
-            className={`${getStatusColor(
-              item.status
-            )} hover:text-white font-medium gap-1 justify-self-center`}
+            className="border-[#E4E4E7] bg-white text-gray-700 font-normal gap-2 rounded-sm"
           >
-            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-            <ChevronDown className="w-4 h-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>Upcoming</DropdownMenuItem>
-          <DropdownMenuItem>Doing</DropdownMenuItem>
-          <DropdownMenuItem>Completed</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="justify-self-center"
-          >
-            <MoreVertical className="w-4 h-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+            {getActivityIcon(item.activityType)}
+            {item.activityType.charAt(0).toUpperCase() +
+              item.activityType.slice(1)}
+          </Badge>
+        </div>
+      </TableCell>
+      <TableCell className="w-[72px] align-middle">
+        <div className="flex items-center gap-1 justify-center">
+          {getPriorityColor(item.priority)}
+          <span className="text-sm font-semibold text-gray-900">
+            {item.priority}
+          </span>
+        </div>
+      </TableCell>
+      <TableCell className="w-[120px] align-middle">
+        <div className="flex justify-right">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="">
+              <button
+                className={`${getStatusColor(
+                  item.status
+                )} hover:text-white font-medium gap-1 px-2 py-1 rounded-sm flex items-center justify-center`}
+              >
+                {item.status.charAt(0).toUpperCase() + item.status.slice(1)} 
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>Upcoming</DropdownMenuItem>
+              <DropdownMenuItem>Doing</DropdownMenuItem>
+              <DropdownMenuItem>Completed</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </TableCell>
+      <TableCell className="w-[32px] align-middle">
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon-sm">
+                <MoreVertical className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </TableCell>
+    </TableRow>
   );
 
   const todayGroup = todoData.find((g) => g.category === 'today');
@@ -257,42 +276,38 @@ function OverviewTodo({ user }: OverviewTodoProps) {
       <div className="mb-4">
         <button
           onClick={() => setTodayExpanded(!todayExpanded)}
-          className="flex items-center gap-2 mb-4 text-gray-900 hover:text-gray-700 px-4"
+          className="flex items-center gap-2 mb-4 text-gray-900 hover:text-gray-700 px-4 z-10"
         >
-          <span className="font-[600] text-[#101828]">Today</span>
+          <span className="font-[600] text-[#101828] z-10">Today</span>
           {todayExpanded ? (
-            <ChevronUp className="w-5 h-5 border-2 border-gray-200 rounded-full" />
+            <ChevronUp className="w-5 h-5 border-2 border-gray-200 rounded-full z-10" />
           ) : (
-            <ChevronDown className="w-5 h-5 rounded-full border-2 border-gray-200 " />
+            <ChevronDown className="w-5 h-5 rounded-full border-2 border-gray-200 z-10" />
           )}
         </button>
 
         {todayExpanded && todayGroup && todayGroup.items.length > 0 && (
-          <div className="space-y-0 -mt-10">
-            {/* Table Header */}
-            <div className="grid grid-cols-[20px_1fr_120px_72px_120px_32px] gap-6 items-center pb-2 mb-2 border-b border-gray-200">
-              <div className="w-4 justify-self-center" />
-              <div />
-              <div className="text-sm font-medium text-[#66666F] justify-self-center">
-                Activity Type
-              </div>
-              <div className="text-sm font-medium text-[#66666F] justify-self-center">
-                Priority
-              </div>
-              <div className="text-sm font-medium text-[#66666F] justify-self-center">
-                Status
-              </div>
-              <div className="w-8 justify-self-center" />
-            </div>
+          <div className="-mt-10">
+            <Table>
+              <TableHeader>
+                <TableRow className="">
+                  <TableHead className="w-[20px]"></TableHead>
+                  <TableHead></TableHead>
+                  <TableHead className="text-center text-[#66666F]">Activity Type</TableHead>
+                  <TableHead className="text-center text-[#66666F]">Priority</TableHead>
+                  <TableHead className="text-center text-[#66666F]">Status</TableHead>
+                  <TableHead className="w-[32px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {todayGroup.items.map((item) => renderTodoItem(item))}
+              </TableBody>
+            </Table>
 
-            {/* Render Todo Items */}
-            {todayGroup.items.map((item) => renderTodoItem(item))}
-
-            {/* Load More Button */}
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center">
               <Button
                 variant="ghost"
-                className="text-gray-700 hover:text-gray-900 font-medium"
+                className="text-[#18181B] hover:text-gray-900 font-medium text-lg"
               >
                 Load More
               </Button>
@@ -310,35 +325,38 @@ function OverviewTodo({ user }: OverviewTodoProps) {
           >
             <span className="font-medium">Overdue</span>
             {overdueExpanded ? (
-              <ChevronUp className="w-4 h-4 rounded-full border-2 border-gray-200" />
+              <ChevronUp className="w-5 h-5 border-2 border-gray-200 bg-white rounded-full" />
             ) : (
-              <ChevronDown className="w-4 h-4 rounded-full border-2 border-gray-200" />
+              <ChevronDown className="w-5 h-5 border-2 border-gray-200 bg-white rounded-full" />
             )}
-            <span className="text-sm text-red-500">
+            <span className="text-sm text-red-500 font-medium">
               {overdueGroup.count} Task{overdueGroup.count !== 1 ? 's' : ''}
             </span>
           </button>
 
           {overdueExpanded && overdueGroup.items.length > 0 && (
-            <div className="space-y-0 mt-4">
-              {/* Table Header */}
-              <div className="grid grid-cols-[20px_1fr_120px_72px_120px_32px] gap-6 items-center pb-2 mb-2 border-b border-gray-200">
-                <div className="w-4 justify-self-center" />
-                <div />
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Activity Type
-                </div>
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Priority
-                </div>
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Status
-                </div>
-                <div className="w-8 justify-self-center" />
-              </div>
-
-              {/* Render Todo Items */}
-              {overdueGroup.items.map((item) => renderTodoItem(item))}
+            <div className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[20px]"></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Activity Type
+                    </TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Priority
+                    </TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Status
+                    </TableHead>
+                    <TableHead className="w-[32px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {overdueGroup.items.map((item) => renderTodoItem(item))}
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>
@@ -349,13 +367,13 @@ function OverviewTodo({ user }: OverviewTodoProps) {
         <div className="mb-4">
           <button
             onClick={() => setNextExpanded(!nextExpanded)}
-            className="flex items-center gap-2 w-full py-3 px-4 bg-white rounded-lg text-gray-900 hover:bg-gray-50"
+            className="flex items-center gap-2 w-full  px-4 bg-white rounded-lg text-gray-900 hover:bg-gray-50"
           >
             <span className="font-medium">Next</span>
             {nextExpanded ? (
-              <ChevronUp className="w-4 h-4 rounded-full border-2 border-gray-200" />
+              <ChevronUp className="w-5 h-5 border-2 border-gray-200 bg-white rounded-full" />
             ) : (
-              <ChevronDown className="w-4 h-4 rounded-full border-2 border-gray-200" />
+              <ChevronDown className="w-5 h-5 border-2 border-gray-200 bg-white rounded-full" />
             )}
             <span className="text-sm text-gray-500">
               {nextGroup.count} Task{nextGroup.count !== 1 ? 's' : ''}
@@ -363,25 +381,28 @@ function OverviewTodo({ user }: OverviewTodoProps) {
           </button>
 
           {nextExpanded && nextGroup.items.length > 0 && (
-            <div className="space-y-0 mt-4">
-              {/* Table Header */}
-              <div className="grid grid-cols-[20px_1fr_120px_72px_120px_32px] gap-6 items-center pb-2 mb-2 border-b border-gray-200">
-                <div className="w-4 justify-self-center" />
-                <div />
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Activity Type
-                </div>
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Priority
-                </div>
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Status
-                </div>
-                <div className="w-8 justify-self-center" />
-              </div>
-
-              {/* Render Todo Items */}
-              {nextGroup.items.map((item) => renderTodoItem(item))}
+            <div className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[20px]"></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Activity Type
+                    </TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Priority
+                    </TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Status
+                    </TableHead>
+                    <TableHead className="w-[32px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {nextGroup.items.map((item) => renderTodoItem(item))}
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>
@@ -392,13 +413,13 @@ function OverviewTodo({ user }: OverviewTodoProps) {
         <div>
           <button
             onClick={() => setUnscheduledExpanded(!unscheduledExpanded)}
-            className="flex items-center gap-2 w-full py-3 px-4 bg-white rounded-lg text-gray-900 hover:bg-gray-50"
+            className="flex items-center gap-2 w-full px-4 bg-white rounded-lg text-gray-900 hover:bg-gray-50"
           >
             <span className="font-medium">Un Scheduled</span>
             {unscheduledExpanded ? (
-              <ChevronUp className="w-4 h-4 rounded-full border-2 border-gray-200" />
+              <ChevronUp className="w-5 h-5 border-2 border-gray-200 bg-white rounded-full" />
             ) : (
-              <ChevronDown className="w-4 h-4 rounded-full border-2 border-gray-200" />
+              <ChevronDown className="w-5 h-5 border-2 border-gray-200 bg-white rounded-full" />
             )}
             <span className="text-sm text-gray-500">
               {unscheduledGroup.count} Task
@@ -407,25 +428,28 @@ function OverviewTodo({ user }: OverviewTodoProps) {
           </button>
 
           {unscheduledExpanded && unscheduledGroup.items.length > 0 && (
-            <div className="space-y-0 mt-4">
-              {/* Table Header */}
-              <div className="grid grid-cols-[20px_1fr_120px_72px_120px_32px] gap-6 items-center pb-2 mb-2 border-b border-gray-200">
-                <div className="w-4 justify-self-center" />
-                <div />
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Activity Type
-                </div>
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Priority
-                </div>
-                <div className="text-sm font-medium text-gray-400 justify-self-center">
-                  Status
-                </div>
-                <div className="w-8 justify-self-center" />
-              </div>
-
-              {/* Render Todo Items */}
-              {unscheduledGroup.items.map((item) => renderTodoItem(item))}
+            <div className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[20px]"></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Activity Type
+                    </TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Priority
+                    </TableHead>
+                    <TableHead className="text-center text-gray-400">
+                      Status
+                    </TableHead>
+                    <TableHead className="w-[32px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {unscheduledGroup.items.map((item) => renderTodoItem(item))}
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>
