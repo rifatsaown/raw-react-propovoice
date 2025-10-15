@@ -1,5 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,437 +16,412 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronDown, MessageSquare, MoreVertical, Phone } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronsUpDown,
+  MailPlus,
+  MoreVertical,
+  PhoneCall,
+} from 'lucide-react';
+import { useState } from 'react';
 
-const projects = [
-  {
-    id: 1,
+// Generate dummy projects data similar to DealsTab
+function makeProjects(count: number) {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i + 1,
     name: 'Digital Boost Bundle',
     budget: '$5214.00',
-    progress: 25,
+    progress: [25, 45, 60, 68, 75, 80][i % 6],
     assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
+      { id: '1', name: 'User 1', avatar: '' },
+      { id: '2', name: 'User 2', avatar: '' },
     ],
     additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 2,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 3,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 4,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 5,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 6,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 7,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 8,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 68,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 9,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 80,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 10,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 11,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-  {
-    id: 12,
-    name: 'Digital Boost Bundle',
-    budget: '$5214.00',
-    progress: 25,
-    assignees: [
-      { name: 'User 1', avatar: '' },
-      { name: 'User 2', avatar: '' },
-    ],
-    additionalCount: 2,
-    status: 'In Progress',
-  },
-];
+    status: ['In Progress', 'Done', 'On Hold'][i % 3] as
+      | 'In Progress'
+      | 'Done'
+      | 'On Hold',
+  }));
+}
+
+const allProjects = makeProjects(337);
+const ROW_OPTIONS = [10, 20, 50, 100];
 
 export default function ProjectTab() {
+  const [page, setPage] = useState<number>(1);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(20);
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
+  const pageCount = Math.ceil(allProjects.length / rowsPerPage);
+  const paginated = allProjects.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+
+  function goToPage(p: number) {
+    if (p < 1 || p > pageCount) return;
+    setPage(p);
+  }
+
+  // Smart pagination window
+  const pageButtons: number[] = [];
+  for (let i = Math.max(1, page - 1); i <= Math.min(pageCount, page + 1); i++) {
+    pageButtons.push(i);
+  }
+
+  // Selection helpers (mirror DealsTab)
+  const allSelected =
+    paginated.length > 0 && paginated.every((p) => selectedRows.includes(p.id));
+  const someSelected =
+    paginated.some((p) => selectedRows.includes(p.id)) && !allSelected;
+
+  const toggleAllRows = (checked: boolean) => {
+    if (checked) {
+      const visibleIds = paginated.map((p) => p.id);
+      setSelectedRows((prev) => {
+        const newSelected = [...prev];
+        visibleIds.forEach((id) => {
+          if (!newSelected.includes(id)) newSelected.push(id);
+        });
+        return newSelected;
+      });
+    } else {
+      const visibleIds = paginated.map((p) => p.id);
+      setSelectedRows((prev) => prev.filter((id) => !visibleIds.includes(id)));
+    }
+  };
+
+  const toggleRowSelection = (id: number, checked: boolean) => {
+    if (checked) {
+      setSelectedRows((prev) => [...prev, id]);
+    } else {
+      setSelectedRows((prev) => prev.filter((rowId) => rowId !== id));
+    }
+  };
+
   return (
-    <div className="w-full bg-white">
+    <div className="">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900">Projects</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-semibold">Projects</h2>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="bg-gray-700 hover:bg-gray-800 text-white text-sm h-9 px-4 rounded-md">
-              Create Deals
-              <ChevronDown className="ml-2 h-4 w-4" />
+            <Button className="bg-[#71717A] hover:bg-[#5A5A61] text-white rounded-md px-4 py-2 flex items-center gap-2">
+              Create Project
+              <ChevronDown className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Create New Deal</DropdownMenuItem>
+            <DropdownMenuItem>Create New Project</DropdownMenuItem>
             <DropdownMenuItem>Create from Template</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      {/* Tabs and Filters */}
-      <div className="px-6 pt-3 pb-0 flex items-center justify-between border-b border-gray-200">
-        <Tabs defaultValue="all" className="w-auto">
-          <TabsList className="bg-transparent rounded-none h-auto p-0 gap-6 border-0">
-            <TabsTrigger
-              value="all"
-              className="bg-transparent text-gray-600 border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:text-gray-900 rounded-none px-0 pb-3 pt-0 data-[state=active]:shadow-none font-normal text-sm hover:text-gray-900 transition-colors"
-            >
+      {/* Tabs and Filters (mirror DealsTab with a button group) */}
+      <div className="bg-white rounded-lg px-4 py-3">
+        <div className="flex items-center justify-between mb-4">
+          <ButtonGroup>
+            <Button variant="outline" size="sm" className="bg-gray-200">
               All
-            </TabsTrigger>
-            <TabsTrigger
-              value="in-progress"
-              className="bg-transparent text-gray-600 border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:text-gray-900 rounded-none px-0 pb-3 pt-0 data-[state=active]:shadow-none font-normal text-sm hover:text-gray-900 transition-colors"
-            >
+            </Button>
+            <Button variant="outline" size="sm" className="text-[#71717A]">
               In Progress
-            </TabsTrigger>
-            <TabsTrigger
-              value="done"
-              className="bg-transparent text-gray-600 border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:text-gray-900 rounded-none px-0 pb-3 pt-0 data-[state=active]:shadow-none font-normal text-sm hover:text-gray-900 transition-colors"
-            >
+            </Button>
+            <Button variant="outline" size="sm" className="text-[#71717A]">
               Done
-            </TabsTrigger>
-            <TabsTrigger
-              value="overdue"
-              className="bg-transparent text-gray-600 border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:text-gray-900 rounded-none px-0 pb-3 pt-0 data-[state=active]:shadow-none font-normal text-sm hover:text-gray-900 transition-colors"
-            >
+            </Button>
+            <Button variant="outline" size="sm" className="text-[#71717A]">
               Overdue
-            </TabsTrigger>
-            <TabsTrigger
-              value="archived"
-              className="bg-transparent text-gray-600 border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:text-gray-900 rounded-none px-0 pb-3 pt-0 data-[state=active]:shadow-none font-normal text-sm hover:text-gray-900 transition-colors"
-            >
+            </Button>
+            <Button variant="outline" size="sm" className="text-[#71717A]">
               Archived
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+            </Button>
+          </ButtonGroup>
 
-        <div className="flex items-center gap-2 pb-3">
-          <span className="text-sm text-gray-600">View As</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 px-3 text-sm">
-                Date
-                <ChevronDown className="ml-2 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Date</DropdownMenuItem>
-              <DropdownMenuItem>Name</DropdownMenuItem>
-              <DropdownMenuItem>Status</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2 pb-3">
+            <span className="text-sm text-muted-foreground">View As a :</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-md h-8 px-3 flex items-center gap-2 text-[#344054]"
+                >
+                  Date
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>Date</DropdownMenuItem>
+                <DropdownMenuItem>Name</DropdownMenuItem>
+                <DropdownMenuItem>Status</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </div>
 
-      {/* Table */}
-      <div className="w-full overflow-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b border-gray-200 hover:bg-transparent">
-              <TableHead className="h-10 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                PROJECT
-              </TableHead>
-              <TableHead className="h-10 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                BUDGET
-              </TableHead>
-              <TableHead className="h-10 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                PROGRESS
-              </TableHead>
-              <TableHead className="h-10 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ASSIGNEE
-              </TableHead>
-              <TableHead className="h-10 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                STATUS
-              </TableHead>
-              <TableHead className="h-10 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">
-                ACTION
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {projects.map((project) => (
-              <TableRow
-                key={project.id}
-                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-              >
-                <TableCell className="px-6 py-4 font-medium text-sm text-gray-900">
-                  {project.name}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-sm text-gray-700">
-                  {project.budget}
-                </TableCell>
-                <TableCell className="px-6 py-4">
+        {/* Table */}
+        <div className="border rounded-lg overflow-hidden">
+          <Table>
+            <TableHeader className="bg-[#F4F4F5]">
+              <TableRow className="hover:bg-[#F4F4F5]">
+                <TableHead className="px-6 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all ${
-                          project.progress >= 80
-                            ? 'bg-green-500'
-                            : project.progress >= 60
-                            ? 'bg-blue-500'
-                            : 'bg-orange-400'
-                        }`}
-                        style={{ width: `${project.progress}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-gray-600 font-medium min-w-[30px]">
-                      {project.progress}%
+                    <Checkbox
+                      checked={
+                        allSelected
+                          ? true
+                          : someSelected
+                          ? 'indeterminate'
+                          : false
+                      }
+                      onCheckedChange={toggleAllRows}
+                    />
+                    <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                      Project
+                      <ChevronsUpDown className="w-4 h-4 text-gray-400" />
                     </span>
                   </div>
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  <div className="flex items-center -space-x-2">
-                    {project.assignees.map((assignee, idx) => (
-                      <Avatar
-                        key={idx}
-                        className="w-7 h-7 border-2 border-white ring-1 ring-gray-100"
-                      >
-                        <AvatarImage src={assignee.avatar} />
-                        <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white text-xs font-medium">
-                          {assignee.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                    ))}
-                    {project.additionalCount > 0 && (
-                      <div className="w-7 h-7 rounded-full bg-gray-100 border-2 border-white ring-1 ring-gray-100 flex items-center justify-center">
-                        <span className="text-xs text-gray-600 font-medium">
-                          +{project.additionalCount}
-                        </span>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                    Budget
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                    Progress
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                    Assignee
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                    Status
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="pr-10 w-0">
+                  <span className="flex items-center gap-1 justify-end uppercase text-xs font-semibold text-[#71717A]">
+                    Action
+                  </span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginated.map((project) => (
+                <TableRow key={project.id} className="hover:bg-gray-50">
+                  <TableCell className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={selectedRows.includes(project.id)}
+                        onCheckedChange={(checked) =>
+                          toggleRowSelection(project.id, !!checked)
+                        }
+                      />
+                      <span className="text-sm font-medium">
+                        {project.name}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <span className="text-sm">{project.budget}</span>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            project.progress >= 80
+                              ? 'bg-green-500'
+                              : project.progress >= 60
+                              ? 'bg-blue-500'
+                              : 'bg-orange-400'
+                          }`}
+                          style={{ width: `${project.progress}%` }}
+                        />
                       </div>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2.5 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 rounded text-xs font-medium"
-                      >
-                        {project.status}
-                        <ChevronDown className="ml-1 h-3 w-3" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem>In Progress</DropdownMenuItem>
-                      <DropdownMenuItem>Done</DropdownMenuItem>
-                      <DropdownMenuItem>On Hold</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-                    >
-                      <Phone className="h-4 w-4" />
-                    </Button>
+                      <span className="text-xs text-gray-600 font-medium min-w-[30px]">
+                        {project.progress}%
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="flex items-center -space-x-2">
+                      {project.assignees.map((assignee) => (
+                        <Avatar
+                          key={assignee.id}
+                          className="h-8 w-8 border-2 border-white ring-1 ring-gray-100"
+                        >
+                          {assignee.avatar ? (
+                            <AvatarImage src={assignee.avatar} />
+                          ) : (
+                            <AvatarFallback className="bg-gradient-to-br from-gray-200 to-gray-300 text-gray-600 text-xs font-medium">
+                              {assignee.name.charAt(0)}
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
+                      ))}
+                      {project.additionalCount > 0 && (
+                        <div className="h-8 w-8 rounded-full bg-gray-100 border-2 border-white ring-1 ring-gray-100 flex items-center justify-center">
+                          <span className="text-xs font-semibold text-gray-600">
+                            +{project.additionalCount}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
+                        <button className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-sky-200 hover:bg-[#2563EB] text-[#006BFF] text-sm font-medium rounded-sm transition-colors">
+                          {project.status}
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
-                          Delete
-                        </DropdownMenuItem>
+                      <DropdownMenuContent align="start">
+                        <DropdownMenuItem>In Progress</DropdownMenuItem>
+                        <DropdownMenuItem>Done</DropdownMenuItem>
+                        <DropdownMenuItem>On Hold</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Footer Pagination */}
-      <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200">
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-600">Rows per page</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2 text-sm font-normal"
-              >
-                20
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem>10</DropdownMenuItem>
-              <DropdownMenuItem>20</DropdownMenuItem>
-              <DropdownMenuItem>50</DropdownMenuItem>
-              <DropdownMenuItem>100</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <span className="text-sm text-gray-600">
-            Total Contact 1-20 of 337
-          </span>
+                  </TableCell>
+                  <TableCell className="text-right py-4 pr-6">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-8 w-8 rounded-sm"
+                      >
+                        <MailPlus className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-8 w-8 rounded-sm"
+                      >
+                        <PhoneCall className="w-4 h-4" />
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="h-8 w-8 rounded-sm"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-600">
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
 
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-3 text-sm text-gray-600 hover:text-gray-900"
-          >
-            Previous
-          </Button>
-          <Button
-            variant="default"
-            size="sm"
-            className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700 text-white text-sm"
-          >
-            1
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-          >
-            2
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-          >
-            3
-          </Button>
-          <span className="px-2 text-gray-400">...</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-3 text-sm text-gray-600 hover:text-gray-900"
-          >
-            Next
-          </Button>
+        {/* Pagination */}
+        <div className="flex items-center justify-between mt-6 text-sm">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">Rows per page</span>
+              <select
+                className="appearance-none bg-none border border-gray-300 rounded-sm pl-2 pr-0.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#009B6A] focus:border-transparent font-medium"
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  setPage(1);
+                }}
+              >
+                {ROW_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="text-sm">
+              Total Contact {(page - 1) * rowsPerPage + 1}–
+              {Math.min(page * rowsPerPage, allProjects.length)} of{' '}
+              {allProjects.length}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => goToPage(page - 1)}
+              className="text-sm px-3"
+            >
+              &lt; Previous
+            </Button>
+            {page > 2 && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => goToPage(1)}
+                  className="min-w-[36px] h-9"
+                >
+                  1
+                </Button>
+                {page > 3 && <span className="px-1">...</span>}
+              </>
+            )}
+            {pageButtons.map((p) => (
+              <Button
+                key={p}
+                variant={p === page ? 'outline' : 'ghost'}
+                size="sm"
+                onClick={() => goToPage(p)}
+                className={`min-w-[36px] h-9 `}
+              >
+                {p}
+              </Button>
+            ))}
+            {page < pageCount - 1 && (
+              <>
+                {page < pageCount - 2 && <span className="px-1">...</span>}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => goToPage(pageCount)}
+                  className="min-w-[36px] h-9"
+                >
+                  {pageCount}
+                </Button>
+              </>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={page === pageCount}
+              onClick={() => goToPage(page + 1)}
+              className="text-sm px-3"
+            >
+              Next &gt;
+            </Button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
- 

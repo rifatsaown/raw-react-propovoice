@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
@@ -15,9 +16,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
+  AlarmClock,
   ChevronDown,
   ChevronsUpDown,
-  Clock,
   Download,
   Ellipsis,
 } from 'lucide-react';
@@ -32,21 +33,20 @@ interface Invoice {
   status: 'Paid' | 'Sent' | 'Draft' | 'Unpaid' | 'Partially Paid';
 }
 
-// Function to get status badge styling
-function getStatusBadgeStyle(status: Invoice['status']): string {
+function getInvoiceBadgeClass(status: Invoice['status']): string {
   switch (status) {
     case 'Paid':
-      return 'bg-green-100 text-green-800 border-green-200';
+      return 'bg-[#EBFEF5] text-[#036246]';
     case 'Sent':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
+      return 'bg-[#BAE6FD] text-[#006BFF]';
     case 'Draft':
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return 'bg-[#E4E4E7] text-[#09090B]';
     case 'Unpaid':
-      return 'bg-orange-100 text-orange-800 border-orange-200';
+      return 'bg-[#FFEED5] text-[#C1460D]';
     case 'Partially Paid':
-      return 'bg-purple-100 text-purple-800 border-purple-200';
+      return 'bg-[#EBE5FF] text-[#7916FF]';
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return 'bg-sky-200 text-[#006BFF]';
   }
 }
 
@@ -81,7 +81,6 @@ const allInvoices = generateInvoices(337);
 const ROW_OPTIONS = [10, 20, 50, 100];
 
 export default function InvoiceTab() {
-  const [activeTab, setActiveTab] = useState('all');
   const [page, setPage] = useState<number>(1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(20);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
@@ -98,7 +97,7 @@ export default function InvoiceTab() {
   }
 
   // Smart pagination
-  const pageButtons = [];
+  const pageButtons: number[] = [];
   for (let i = Math.max(1, page - 1); i <= Math.min(pageCount, page + 1); i++) {
     pageButtons.push(i);
   }
@@ -142,316 +141,273 @@ export default function InvoiceTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold">Invoice</h2>
         <Button className="bg-[#71717A] hover:bg-[#5A5A61] text-white rounded-md px-4 py-2 flex items-center gap-2">
-          Create Deals
+          Create Invoice
           <ChevronDown className="w-4 h-4" />
         </Button>
       </div>
 
-      {/* Tabs and Filters */}
-      <div className="flex items-center justify-between border-b">
-        <div className="flex items-center gap-8">
-          <button
-            onClick={() => setActiveTab('all')}
-            className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
-              activeTab === 'all'
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            All
-            {activeTab === 'all' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#009B6A]" />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('in-progress')}
-            className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
-              activeTab === 'in-progress'
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            In Progress
-            {activeTab === 'in-progress' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#009B6A]" />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('done')}
-            className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
-              activeTab === 'done'
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Done
-            {activeTab === 'done' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#009B6A]" />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('overdue')}
-            className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
-              activeTab === 'overdue'
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Overdue
-            {activeTab === 'overdue' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#009B6A]" />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('archived')}
-            className={`pb-3 px-1 text-sm font-medium transition-colors relative ${
-              activeTab === 'archived'
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Archived
-            {activeTab === 'archived' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#009B6A]" />
-            )}
-          </button>
+      {/* Filters and Controls */}
+      <div className="bg-white rounded-lg px-4 py-3">
+        <div className="flex items-center justify-between mb-4">
+          <ButtonGroup>
+            <Button variant="outline" size="sm" className="bg-gray-200">
+              All
+            </Button>
+            <Button variant="outline" size="sm" className="text-[#71717A]">
+              Paid
+            </Button>
+            <Button variant="outline" size="sm" className="text-[#71717A]">
+              Sent
+            </Button>
+            <Button variant="outline" size="sm" className="text-[#71717A]">
+              Draft
+            </Button>
+            <Button variant="outline" size="sm" className="text-[#71717A]">
+              Unpaid
+            </Button>
+          </ButtonGroup>
+
+          <div className="flex items-center gap-2 pb-3">
+            <span className="text-sm text-muted-foreground">View As a :</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-md h-8 px-3 flex items-center gap-2"
+                >
+                  Date
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>Date</DropdownMenuItem>
+                <DropdownMenuItem>Amount</DropdownMenuItem>
+                <DropdownMenuItem>Status</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 pb-3">
-          <span className="text-sm text-muted-foreground">View As a:</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-md h-8 px-3 flex items-center gap-2"
-              >
-                Date
-                <ChevronDown className="w-3 h-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Date</DropdownMenuItem>
-              <DropdownMenuItem>Amount</DropdownMenuItem>
-              <DropdownMenuItem>Status</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader className="bg-[#F4F4F5]">
-            <TableRow className="hover:bg-[#F4F4F5]">
-              <TableHead className="px-6 py-3">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    checked={
-                      allSelected
-                        ? true
-                        : someSelected
-                        ? 'indeterminate'
-                        : false
-                    }
-                    onCheckedChange={toggleAllRows}
-                  />
-                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
-                    Invoice
-                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
-                  </span>
-                </div>
-              </TableHead>
-              <TableHead className="py-3">
-                <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
-                  Total Amount
-                  <ChevronsUpDown className="w-4 h-4 text-gray-400" />
-                </span>
-              </TableHead>
-              <TableHead className="py-3">
-                <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
-                  Paid Amount
-                  <ChevronsUpDown className="w-4 h-4 text-gray-400" />
-                </span>
-              </TableHead>
-              <TableHead className="py-3">
-                <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
-                  Status
-                  <ChevronsUpDown className="w-4 h-4 text-gray-400" />
-                </span>
-              </TableHead>
-              <TableHead className="text-right py-3 pr-6">
-                <span className="flex items-center gap-1 justify-end uppercase text-xs font-semibold text-gray-700">
-                  Action
-                </span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginated.map((invoice) => (
-              <TableRow key={invoice.id} className="hover:bg-gray-50">
-                <TableCell className="px-6 py-4">
+        {/* Table */}
+        <div className="border rounded-lg overflow-hidden">
+          <Table>
+            <TableHeader className="bg-[#F4F4F5]">
+              <TableRow className="hover:bg-[#F4F4F5]">
+                <TableHead className="px-6 py-3">
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      checked={selectedRows.includes(invoice.id)}
-                      onCheckedChange={(checked) =>
-                        toggleRowSelection(invoice.id, !!checked)
+                      checked={
+                        allSelected
+                          ? true
+                          : someSelected
+                          ? 'indeterminate'
+                          : false
                       }
+                      onCheckedChange={toggleAllRows}
                     />
-                    <span className="text-sm font-medium">
-                      {invoice.invoiceNumber}
+                    <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                      Invoice
+                      <ChevronsUpDown className="w-4 h-4 text-gray-400" />
                     </span>
                   </div>
-                </TableCell>
-                <TableCell className="py-4">
-                  <span className="text-sm">{invoice.totalAmount}</span>
-                </TableCell>
-                <TableCell className="py-4">
-                  <span className="text-sm">{invoice.paidAmount}</span>
-                </TableCell>
-                <TableCell className="py-4">
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className={`px-3 py-1.5 text-sm font-medium rounded-full border ${getStatusBadgeStyle(
-                        invoice.status
-                      )}`}
-                    >
-                      {invoice.status}
-                    </span>
-                    {invoice.status !== 'Draft' && (
-                      <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="text-right py-4 pr-6">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="h-8 w-8 rounded-md"
-                    >
-                      {invoice.status === 'Paid' ? (
-                        <Download className="w-4 h-4" />
-                      ) : (
-                        <Clock className="w-4 h-4" />
-                      )}
-                    </Button>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                    Total Amount
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                    Paid Amount
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-[#71717A]">
+                    Status
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="text-right py-3 pr-6">
+                  <span className="flex items-center gap-1 justify-end uppercase text-xs font-semibold text-[#71717A]">
+                    Action
+                  </span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginated.map((invoice) => (
+                <TableRow key={invoice.id} className="hover:bg-gray-50">
+                  <TableCell className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={selectedRows.includes(invoice.id)}
+                        onCheckedChange={(checked) =>
+                          toggleRowSelection(invoice.id, !!checked)
+                        }
+                      />
+                      <span className="text-sm font-medium">
+                        {invoice.invoiceNumber}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <span className="text-sm">{invoice.totalAmount}</span>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <span className="text-sm">{invoice.paidAmount}</span>
+                  </TableCell>
+                  <TableCell className="py-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          className="h-8 w-8 rounded-md"
+                        <button
+                          className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-sm font-medium rounded-sm transition-colors ${getInvoiceBadgeClass(
+                            invoice.status
+                          )}`}
                         >
-                          <Ellipsis className="w-4 h-4" />
-                        </Button>
+                          {invoice.status}
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Send Invoice</DropdownMenuItem>
+                      <DropdownMenuContent align="start">
+                        <DropdownMenuItem>Paid</DropdownMenuItem>
+                        <DropdownMenuItem>Sent</DropdownMenuItem>
+                        <DropdownMenuItem>Draft</DropdownMenuItem>
+                        <DropdownMenuItem>Unpaid</DropdownMenuItem>
+                        <DropdownMenuItem>Partially Paid</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination */}
-      <div className="flex items-center justify-between mt-6 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <span className="text-sm">Rows per page</span>
-          <select
-            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#009B6A] focus:border-transparent"
-            value={rowsPerPage}
-            onChange={(e) => {
-              setRowsPerPage(Number(e.target.value));
-              setPage(1);
-            }}
-          >
-            {ROW_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+                  </TableCell>
+                  <TableCell className="text-right py-4 pr-6">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-8 w-8 rounded-sm"
+                      >
+                        {invoice.status === 'Paid' ? (
+                          <Download className="w-4 h-4" />
+                        ) : (
+                          <AlarmClock className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="h-8 w-8 rounded-sm"
+                          >
+                            <Ellipsis className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                          <DropdownMenuItem>View Details</DropdownMenuItem>
+                          <DropdownMenuItem>Send Invoice</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
 
-        <div className="text-sm text-gray-600">
-          Total Contact {(page - 1) * rowsPerPage + 1}–
-          {Math.min(page * rowsPerPage, allInvoices.length)} of{' '}
-          {allInvoices.length}
-        </div>
-
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={page === 1}
-            onClick={() => goToPage(page - 1)}
-            className="text-sm px-3"
-          >
-            &lt; Previous
-          </Button>
-          {page > 2 && (
-            <>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => goToPage(1)}
-                className="min-w-[36px] h-9"
+        {/* Pagination */}
+        <div className="flex items-center justify-between mt-6 text-sm">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">Rows per page</span>
+              <select
+                className="appearance-none bg-none border border-gray-300 rounded-sm pl-2 pr-0.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#009B6A] focus:border-transparent font-medium"
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  setPage(1);
+                }}
               >
-                1
-              </Button>
-              {page > 3 && <span className="px-1">...</span>}
-            </>
-          )}
-          {pageButtons.map((p) => (
+                {ROW_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="text-sm">
+              Total Contact {(page - 1) * rowsPerPage + 1}–
+              {Math.min(page * rowsPerPage, allInvoices.length)} of{' '}
+              {allInvoices.length}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
             <Button
-              key={p}
-              variant={p === page ? 'default' : 'ghost'}
+              variant="ghost"
               size="sm"
-              onClick={() => goToPage(p)}
-              className={`min-w-[36px] h-9 ${
-                p === page
-                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                  : ''
-              }`}
+              disabled={page === 1}
+              onClick={() => goToPage(page - 1)}
+              className="text-sm px-3"
             >
-              {p}
+              &lt; Previous
             </Button>
-          ))}
-          {page < pageCount - 1 && (
-            <>
-              {page < pageCount - 2 && <span className="px-1">...</span>}
+            {page > 2 && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => goToPage(1)}
+                  className="min-w-[36px] h-9"
+                >
+                  1
+                </Button>
+                {page > 3 && <span className="px-1">...</span>}
+              </>
+            )}
+            {pageButtons.map((p) => (
               <Button
-                variant="ghost"
+                key={p}
+                variant={p === page ? 'outline' : 'ghost'}
                 size="sm"
-                onClick={() => goToPage(pageCount)}
-                className="min-w-[36px] h-9"
+                onClick={() => goToPage(p)}
+                className={`min-w-[36px] h-9 `}
               >
-                {pageCount}
+                {p}
               </Button>
-            </>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={page === pageCount}
-            onClick={() => goToPage(page + 1)}
-            className="text-sm px-3"
-          >
-            Next &gt;
-          </Button>
+            ))}
+            {page < pageCount - 1 && (
+              <>
+                {page < pageCount - 2 && <span className="px-1">...</span>}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => goToPage(pageCount)}
+                  className="min-w-[36px] h-9"
+                >
+                  {pageCount}
+                </Button>
+              </>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={page === pageCount}
+              onClick={() => goToPage(page + 1)}
+              className="text-sm px-3"
+            >
+              Next &gt;
+            </Button>
+          </div>
         </div>
       </div>
     </div>

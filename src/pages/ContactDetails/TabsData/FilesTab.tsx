@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
@@ -144,272 +145,277 @@ export default function FilesTab() {
         </Button>
       </div>
 
-      {/* Tabs + View */}
-      <div className="flex items-center justify-between border-b">
-        <div className="flex items-center gap-2">
-          {(
-            [
-              { key: 'all', label: 'All' },
-              { key: 'image', label: 'Images' },
-              { key: 'doc', label: 'Docs' },
-              { key: 'link', label: 'Link' },
-            ] as { key: TabKey; label: string }[]
-          ).map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setActiveTab(t.key)}
-              className={`pb-3 px-3 text-sm font-medium transition-colors relative ${
-                activeTab === t.key
-                  ? 'text-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t.label}
-              {activeTab === t.key && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#009B6A]" />
-              )}
-            </button>
-          ))}
-        </div>
-        <div className="flex items-center gap-2 pb-3">
-          <span className="text-sm text-muted-foreground">View As a :</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+      {/* Filters + Table + Pagination */}
+      <div className="bg-white rounded-lg px-4 py-3">
+        {/* Filters + View */}
+        <div className="flex items-center justify-between mb-4">
+          <ButtonGroup>
+            {(
+              [
+                { key: 'all', label: 'All' },
+                { key: 'image', label: 'Images' },
+                { key: 'doc', label: 'Docs' },
+                { key: 'link', label: 'Link' },
+              ] as { key: TabKey; label: string }[]
+            ).map((t) => (
               <Button
+                key={t.key}
                 variant="outline"
                 size="sm"
-                className="rounded-md h-8 px-3"
+                onClick={() => {
+                  setActiveTab(t.key);
+                  setPage(1);
+                }}
+                className={
+                  t.key === activeTab ? 'bg-gray-200' : 'text-[#71717A]'
+                }
               >
-                Date
-                <ChevronDown className="w-3 h-3 ml-1" />
+                {t.label}
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Date</DropdownMenuItem>
-              <DropdownMenuItem>Name</DropdownMenuItem>
-              <DropdownMenuItem>Type</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+            ))}
+          </ButtonGroup>
 
-      {/* Table */}
-      <div className="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader className="bg-[#F4F4F5]">
-            <TableRow className="hover:bg-[#F4F4F5]">
-              <TableHead className="px-6 py-3">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    checked={
-                      allSelected
-                        ? true
-                        : someSelected
-                        ? 'indeterminate'
-                        : false
-                    }
-                    onCheckedChange={toggleAllRows}
-                  />
-                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
-                    Files and Link
-                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
-                  </span>
-                </div>
-              </TableHead>
-              <TableHead className="py-3">
-                <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
-                  Type
-                  <ChevronsUpDown className="w-4 h-4 text-gray-400" />
-                </span>
-              </TableHead>
-              <TableHead className="py-3">
-                <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
-                  Added By
-                  <ChevronsUpDown className="w-4 h-4 text-gray-400" />
-                </span>
-              </TableHead>
-              <TableHead className="text-right py-3 pr-6">
-                <span className="flex items-center gap-1 justify-end uppercase text-xs font-semibold text-gray-700">
-                  Action
-                </span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginated.map((row) => (
-              <TableRow key={row.id} className="hover:bg-gray-50">
-                <TableCell className="px-6 py-4">
+          <div className="flex items-center gap-2 pb-3">
+            <span className="text-sm text-muted-foreground">View As a :</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-md h-8 px-3"
+                >
+                  Date
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>Date</DropdownMenuItem>
+                <DropdownMenuItem>Name</DropdownMenuItem>
+                <DropdownMenuItem>Type</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="border rounded-lg overflow-hidden">
+          <Table>
+            <TableHeader className="bg-[#F4F4F5]">
+              <TableRow className="hover:bg-[#F4F4F5]">
+                <TableHead className="px-6 py-3">
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      checked={selectedRows.includes(row.id)}
-                      onCheckedChange={(c) => toggleRow(row.id, !!c)}
+                      checked={
+                        allSelected
+                          ? true
+                          : someSelected
+                          ? 'indeterminate'
+                          : false
+                      }
+                      onCheckedChange={toggleAllRows}
                     />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        {row.type === 'image' && (
-                          <span className="inline-flex h-5 w-5 items-center justify-center rounded-sm bg-emerald-100 text-emerald-600">
-                            img
+                    <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
+                      Files and Link
+                      <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                    </span>
+                  </div>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
+                    Type
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="py-3">
+                  <span className="flex items-center gap-1 uppercase text-xs font-semibold text-gray-700">
+                    Added By
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                  </span>
+                </TableHead>
+                <TableHead className="text-right py-3 pr-6">
+                  <span className="flex items-center gap-1 justify-end uppercase text-xs font-semibold text-gray-700">
+                    Action
+                  </span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginated.map((row) => (
+                <TableRow key={row.id} className="hover:bg-gray-50">
+                  <TableCell className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={selectedRows.includes(row.id)}
+                        onCheckedChange={(c) => toggleRow(row.id, !!c)}
+                      />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          {row.type === 'image' && (
+                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-sm bg-emerald-100 text-emerald-600">
+                              img
+                            </span>
+                          )}
+                          {row.type === 'doc' && (
+                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-sm bg-blue-100 text-blue-600">
+                              pdf
+                            </span>
+                          )}
+                          {row.type === 'link' && (
+                            <LinkIcon className="w-4 h-4 text-emerald-600" />
+                          )}
+                          <span className="text-sm font-medium">
+                            {row.name}
                           </span>
-                        )}
-                        {row.type === 'doc' && (
-                          <span className="inline-flex h-5 w-5 items-center justify-center rounded-sm bg-blue-100 text-blue-600">
-                            pdf
-                          </span>
-                        )}
-                        {row.type === 'link' && (
-                          <LinkIcon className="w-4 h-4 text-emerald-600" />
-                        )}
-                        <span className="text-sm font-medium">{row.name}</span>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {row.type === 'link' ? row.href : row.size}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {row.type === 'link' ? row.href : row.size}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell className="py-4">
-                  <span className="text-sm capitalize">{row.type}</span>
-                </TableCell>
-                <TableCell className="py-4">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage
-                        src={row.addedBy.avatar}
-                        alt={row.addedBy.name}
-                      />
-                      <AvatarFallback>NU</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">{row.addedBy.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right py-4 pr-6">
-                  <div className="flex justify-end gap-2">
-                    {row.type !== 'link' ? (
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="h-8 w-8 rounded-md"
-                      >
-                        <Download className="w-4 h-4" />
-                      </Button>
-                    ) : (
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="h-8 w-8 rounded-md"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </Button>
-                    )}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <span className="text-sm capitalize">{row.type}</span>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage
+                          src={row.addedBy.avatar}
+                          alt={row.addedBy.name}
+                        />
+                        <AvatarFallback>NU</AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">{row.addedBy.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right py-4 pr-6">
+                    <div className="flex justify-end gap-2">
+                      {row.type !== 'link' ? (
                         <Button
                           size="icon"
                           variant="outline"
-                          className="h-8 w-8 rounded-md"
+                          className="h-8 w-8 rounded-sm"
                         >
-                          <Ellipsis className="w-4 h-4" />
+                          <Download className="w-4 h-4" />
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Rename</DropdownMenuItem>
-                        <DropdownMenuItem>Share</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Footer */}
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <span>Rows per page</span>
-          <select
-            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#009B6A] focus:border-transparent"
-            value={rowsPerPage}
-            onChange={(e) => {
-              setRowsPerPage(Number(e.target.value));
-              setPage(1);
-            }}
-          >
-            {ROW_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+                      ) : (
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="h-8 w-8 rounded-sm"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="h-8 w-8 rounded-sm"
+                          >
+                            <Ellipsis className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>Rename</DropdownMenuItem>
+                          <DropdownMenuItem>Share</DropdownMenuItem>
+                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
 
-        <div className="text-sm text-gray-600">
-          Total Contact {(page - 1) * rowsPerPage + 1}–
-          {Math.min(page * rowsPerPage, filtered.length)} of {filtered.length}
-        </div>
-
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={page === 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="text-sm px-3"
-          >
-            &lt; Previous
-          </Button>
-          {page > 2 && (
-            <>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setPage(1)}
-                className="min-w-[36px] h-9"
+        {/* Pagination */}
+        <div className="flex items-center justify-between mt-6 text-sm">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">Rows per page</span>
+              <select
+                className="appearance-none bg-none border border-gray-300 rounded-sm pl-2 pr-0.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#009B6A] focus:border-transparent font-medium"
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  setPage(1);
+                }}
               >
-                1
-              </Button>
-              {page > 3 && <span className="px-1">...</span>}
-            </>
-          )}
-          {pageButtons.map((p) => (
+                {ROW_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="text-sm">
+              Total Contact {(page - 1) * rowsPerPage + 1}–
+              {Math.min(page * rowsPerPage, filtered.length)} of{' '}
+              {filtered.length}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
             <Button
-              key={p}
-              variant={p === page ? 'default' : 'ghost'}
+              variant="ghost"
               size="sm"
-              onClick={() => setPage(p)}
-              className={`min-w-[36px] h-9 ${
-                p === page
-                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                  : ''
-              }`}
+              disabled={page === 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="text-sm px-3"
             >
-              {p}
+              &lt; Previous
             </Button>
-          ))}
-          {page < pageCount - 1 && (
-            <>
-              {page < pageCount - 2 && <span className="px-1">...</span>}
+            {page > 2 && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPage(1)}
+                  className="min-w-[36px] h-9"
+                >
+                  1
+                </Button>
+                {page > 3 && <span className="px-1">...</span>}
+              </>
+            )}
+            {pageButtons.map((p) => (
               <Button
-                variant="ghost"
+                key={p}
+                variant={p === page ? 'outline' : 'ghost'}
                 size="sm"
-                onClick={() => setPage(pageCount)}
-                className="min-w-[36px] h-9"
+                onClick={() => setPage(p)}
+                className={`min-w-[36px] h-9 `}
               >
-                {pageCount}
+                {p}
               </Button>
-            </>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={page === pageCount}
-            onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-            className="text-sm px-3"
-          >
-            Next &gt;
-          </Button>
+            ))}
+            {page < pageCount - 1 && (
+              <>
+                {page < pageCount - 2 && <span className="px-1">...</span>}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPage(pageCount)}
+                  className="min-w-[36px] h-9"
+                >
+                  {pageCount}
+                </Button>
+              </>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={page === pageCount}
+              onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+              className="text-sm px-3"
+            >
+              Next &gt;
+            </Button>
+          </div>
         </div>
       </div>
     </div>
