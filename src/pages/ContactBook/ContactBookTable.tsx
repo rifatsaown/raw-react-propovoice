@@ -299,7 +299,7 @@ export default function ContactTable() {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mt-4 mb-4 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <span>Rows per page</span>
           <select
@@ -318,13 +318,13 @@ export default function ContactTable() {
           </select>
         </div>
 
-        <div>
+        <div className="text-center md:text-left">
           Total Contact {(page - 1) * rowsPerPage + 1}–
           {Math.min(page * rowsPerPage, allContacts.length)} of{' '}
           {allContacts.length}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end flex-wrap md:flex-nowrap overflow-x-auto whitespace-nowrap">
           <Button
             variant="ghost"
             size="sm"

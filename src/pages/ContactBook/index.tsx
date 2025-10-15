@@ -1,8 +1,8 @@
-import ContactBookHeader from "./ContactBookHeader";
-import ContactBookTable from "./ContactBookTable";
+import ContactBookHeader from './ContactBookHeader';
+import ContactBookTable from './ContactBookTable';
 const ContactBook = () => {
   return (
-    <div className="px-16 ">
+    <div className="px-4 lg:px-16 ">
       <ContactBookHeader />
       <ContactBookTable />
     </div>
