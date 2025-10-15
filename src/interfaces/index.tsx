@@ -75,13 +75,54 @@ interface ActivityGroup {
   activities: ActivityItem[];
 }
 
+// Todo interfaces
+interface TodoItem {
+  id: string;
+  title: string;
+  dueDate: string;
+  relationTo?: string;
+  activityType: 'call' | 'task' | 'meeting' | 'email';
+  priority: 'H' | 'M' | 'L';
+  status: 'upcoming' | 'doing' | 'completed';
+  completed: boolean;
+}
+
+interface TodoGroup {
+  category: 'today' | 'overdue' | 'next' | 'unscheduled';
+  count: number;
+  items: TodoItem[];
+}
+
+// User interface
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+// Deal interface
+interface Deal {
+  id: number;
+  title: string;
+  budget: string;
+  opportunityLevel: 'H' | 'M' | 'L';
+  assignees: User[];
+  extraAssignees?: number;
+  stage: string;
+}
+
 export type {
   ActivityGroup,
   ActivityItem,
   Attachment,
   Contact,
+  Deal,
   IconProps,
   MenuItem,
   MenuSection,
   NoteItem,
+  TodoGroup,
+  TodoItem,
+  User,
 };

@@ -171,7 +171,7 @@ const ActivityHistory = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-white rounded-xl shadow-sm p-6">
       <h2 className="text-xl mb-6 text-[#18181B] font-[500]">
         Activity History
       </h2>

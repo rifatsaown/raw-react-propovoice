@@ -1,4 +1,4 @@
-import type { ActivityGroup } from '@/interfaces';
+import type { ActivityGroup, User } from '@/interfaces';
 import { Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ActivityHistory from './ActivityHistory';
@@ -9,6 +9,14 @@ export default function OverviewTab() {
   const [activityData, setActivityData] = useState<ActivityGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Mock user data - replace with actual user data from props or context
+  const currentUser: User = {
+    id: 'user-123',
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    avatar: 'https://i.pravatar.cc/150?img=1',
+  };
 
   // Mock data for demonstration - replace with actual API call
   useEffect(() => {
@@ -28,7 +36,8 @@ export default function OverviewTab() {
               {
                 id: '1',
                 type: 'deal',
-                title: 'Deal "<b>Ecommerce Redesign</b>" created from this Contact',
+                title:
+                  'Deal "<b>Ecommerce Redesign</b>" created from this Contact',
                 timestamp: '16 May, 6:00 PM',
                 metadata: {
                   budget: '$511',
@@ -174,7 +183,7 @@ export default function OverviewTab() {
             error={error || undefined}
           />
           {/* To Do Section */}
-          <OverviewTodo />
+          <OverviewTodo user={currentUser} />
         </div>
 
         {/* Right Column - Contact Info */}
