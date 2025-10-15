@@ -129,24 +129,24 @@ export default function FilesTab() {
         </DropdownMenu>
       </div>
 
-      {/* Uploader Bar */}
-      <div className="rounded-lg border border-dashed bg-[#FAFAFA] p-4 flex items-start gap-3">
-        <div className="h-10 w-10 rounded-md border flex items-center justify-center bg-white">
-          <CloudUpload className="w-5 h-5 text-muted-foreground" />
-        </div>
-        <div className="flex-1">
-          <div className="text-sm font-medium">Drop your files here</div>
-          <div className="text-xs text-muted-foreground">
-            PNG, JPG, Doc or Pdf (max. 2MB)
-          </div>
-        </div>
-        <Button variant="outline" className="h-9 rounded-md px-3">
-          Upload
-        </Button>
-      </div>
-
-      {/* Filters + Table + Pagination */}
+      {/* Uploader + Filters + Table + Pagination */}
       <div className="bg-white rounded-lg px-4 py-3">
+        {/* Uploader Bar */}
+        <div className="rounded-lg border border-dashed bg-[#FAFAFA] p-4 flex items-start gap-3 mb-4">
+          <div className="h-10 w-10 rounded-md border flex items-center justify-center bg-white">
+            <CloudUpload className="w-5 h-5 text-muted-foreground" />
+          </div>
+          <div className="flex-1">
+            <div className="text-sm font-medium">Drop your files here</div>
+            <div className="text-xs text-muted-foreground">
+              PNG, JPG, Doc or Pdf (max. 2MB)
+            </div>
+          </div>
+          <Button variant="outline" className="h-9 rounded-md px-3">
+            Upload
+          </Button>
+        </div>
+
         {/* Filters + View */}
         <div className="flex items-center justify-between mb-4">
           <ButtonGroup>
