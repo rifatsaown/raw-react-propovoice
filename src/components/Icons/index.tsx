@@ -13,6 +13,8 @@ import salesPipeline from './assets/salesPipeline.svg';
 import servicePackages from './assets/servicePackages.svg';
 import userClient from './assets/userClient.svg';
 import whatsapp from './assets/whatsapp.svg';
+import textFile from './assets/textFile.svg';
+import highFlag from './assets/highFlag.svg';
 import CreateIconComponent from './CreateIconComponent';
 
 // Create icon components using the factory function
@@ -40,6 +42,8 @@ export const FolderShieldIcon = CreateIconComponent(
 export const UserClientIcon = CreateIconComponent(userClient, 'User Client');
 export const BriefcaseIcon = CreateIconComponent(briefcase, 'Briefcase');
 export const WhatsappIcon = CreateIconComponent(whatsapp, 'Whatsapp');
+export const TextFileIcon = CreateIconComponent(textFile, 'Text File');
+export const HighFlagIcon = CreateIconComponent(highFlag, 'High Flag');
 
 // Export all icons as a collection
 const Icons = {
@@ -58,6 +62,8 @@ const Icons = {
   UserClientIcon,
   BriefcaseIcon,
   WhatsappIcon,
+  TextFileIcon,
+  HighFlagIcon,
 };
 
 export default Icons;
