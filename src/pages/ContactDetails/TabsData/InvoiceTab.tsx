@@ -144,7 +144,7 @@ export default function InvoiceTab() {
     <div className="">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold">Invoice</h2>
+        <h2 className="text-2xl">Invoice</h2>
         <Button className="bg-[#71717A] hover:bg-[#5A5A61] text-white rounded-md px-4 py-2 flex items-center gap-2">
           Create Invoice
           <ChevronDown className="w-4 h-4" />

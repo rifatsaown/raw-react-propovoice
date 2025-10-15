@@ -119,7 +119,7 @@ export default function DealsTab() {
     <div className="">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold">Deals</h2>
+        <h2 className="text-2xl">Deals</h2>
         <Button className="bg-[#71717A] hover:bg-[#5A5A61] text-white rounded-md px-4 py-2 flex items-center gap-2">
           Create Deals
           <ChevronDown className="w-4 h-4" />

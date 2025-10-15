@@ -1,3 +1,4 @@
+import { imageThumbnail, linkThumbnail } from '@/assets';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
@@ -19,11 +20,10 @@ import {
 import {
   ChevronDown,
   ChevronsUpDown,
-  CloudUpload,
   Download,
   Ellipsis,
-  ExternalLink,
-  Link as LinkIcon,
+  ImagePlusIcon,
+  Link,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -114,7 +114,7 @@ export default function FilesTab() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Files and Link</h2>
+        <h2 className="text-2xl">Files and Link</h2>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="bg-[#71717A] hover:bg-[#5A5A61] text-white rounded-md px-4 py-2 flex items-center gap-2">
@@ -132,19 +132,15 @@ export default function FilesTab() {
       {/* Uploader + Filters + Table + Pagination */}
       <div className="bg-white rounded-lg px-4 py-3">
         {/* Uploader Bar */}
-        <div className="rounded-lg border border-dashed bg-[#FAFAFA] p-4 flex items-start gap-3 mb-4">
-          <div className="h-10 w-10 rounded-md border flex items-center justify-center bg-white">
-            <CloudUpload className="w-5 h-5 text-muted-foreground" />
-          </div>
+        <div className="rounded-lg border-2 border-dashed bg-[#F4F4F5] p-3 flex items-start gap-3 mb-4">
+          <ImagePlusIcon size={40} strokeWidth={1} className="text-[#71717A]" />
+
           <div className="flex-1">
             <div className="text-sm font-medium">Drop your files here</div>
             <div className="text-xs text-muted-foreground">
               PNG, JPG, Doc or Pdf (max. 2MB)
             </div>
           </div>
-          <Button variant="outline" className="h-9 rounded-md px-3">
-            Upload
-          </Button>
         </div>
 
         {/* Filters + View */}
@@ -251,24 +247,22 @@ export default function FilesTab() {
                       <div>
                         <div className="flex items-center gap-2">
                           {row.type === 'image' && (
-                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-sm bg-emerald-100 text-emerald-600">
-                              img
-                            </span>
+                            <img src={imageThumbnail} alt="image" />
                           )}
                           {row.type === 'doc' && (
-                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-sm bg-blue-100 text-blue-600">
-                              pdf
-                            </span>
+                            <img src={linkThumbnail} alt="pdf" />
                           )}
                           {row.type === 'link' && (
-                            <LinkIcon className="w-4 h-4 text-emerald-600" />
+                            <img src={linkThumbnail} alt="link" />
                           )}
-                          <span className="text-sm font-medium">
-                            {row.name}
-                          </span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {row.type === 'link' ? row.href : row.size}
+                          <div>
+                            <span className="text-sm font-medium">
+                              {row.name}
+                            </span>
+                            <div className="text-xs text-muted-foreground">
+                              {row.type === 'link' ? row.href : row.size}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -280,7 +274,8 @@ export default function FilesTab() {
                     <div className="flex items-center gap-2">
                       <Avatar className="h-6 w-6">
                         <AvatarImage
-                          src={row.addedBy.avatar}
+                          src={'https://randomuser.me/api/portraits/men/11.jpg'}
+                          // src={row.addedBy.avatar}
                           alt={row.addedBy.name}
                         />
                         <AvatarFallback>NU</AvatarFallback>
@@ -304,7 +299,7 @@ export default function FilesTab() {
                           variant="outline"
                           className="h-8 w-8 rounded-sm"
                         >
-                          <ExternalLink className="w-4 h-4" />
+                          <Link className="w-4 h-4" />
                         </Button>
                       )}
                       <DropdownMenu>

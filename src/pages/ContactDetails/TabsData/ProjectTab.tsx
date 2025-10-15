@@ -103,7 +103,7 @@ export default function ProjectTab() {
     <div className="">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold">Projects</h2>
+        <h2 className="text-2xl">Projects</h2>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="bg-[#71717A] hover:bg-[#5A5A61] text-white rounded-md px-4 py-2 flex items-center gap-2">

@@ -52,7 +52,7 @@ export default function NotesTab() {
 
   return (
     <>
-      <h3 className="text-[22px] leading-7 font-semibold text-[#18181B] mb-4">
+      <h3 className="text-2xl  text-[#18181B] mb-4">
         Note
       </h3>
       <div className="rounded-2xl bg-white p-4 sm:p-5 h-[75vh] flex flex-col gap-4">
