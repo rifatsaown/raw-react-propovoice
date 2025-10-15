@@ -187,7 +187,7 @@ export default function OverviewTab() {
         </div>
 
         {/* Right Column - Contact Info */}
-        <BasicInfo />
+        <BasicInfo user={currentUser} />
       </div>
     </>
   );

@@ -17,6 +17,13 @@ import textFile from './assets/textFile.svg';
 import highFlag from './assets/highFlag.svg';
 import lowFlag from './assets/lowFlag.svg';
 // import mediumFlag from './assets/mediumFlag.svg';
+import mailBox from './assets/mailBox.svg';
+import building from './assets/building.svg';
+import facebook from './assets/facebook.svg';
+import linkedin from './assets/linkedin.svg';
+import x from './assets/fi_X.svg';
+import youtube from './assets/youtube.svg';
+import instagram from './assets/instagram.svg';
 import CreateIconComponent from './CreateIconComponent';
 
 // Create icon components using the factory function
@@ -47,6 +54,13 @@ export const WhatsappIcon = CreateIconComponent(whatsapp, 'Whatsapp');
 export const TextFileIcon = CreateIconComponent(textFile, 'Text File');
 export const HighFlagIcon = CreateIconComponent(highFlag, 'High Flag');
 export const LowFlagIcon = CreateIconComponent(lowFlag, 'Low Flag');
+export const MailBoxIcon = CreateIconComponent(mailBox, 'Mail Box');
+export const Building2Icon = CreateIconComponent(building, 'Building');
+export const FacebookIcon = CreateIconComponent(facebook, 'Facebook');
+export const LinkedinIcon = CreateIconComponent(linkedin, 'Linkedin');
+export const XIcon = CreateIconComponent(x, 'X');
+export const YoutubeIcon = CreateIconComponent(youtube, 'Youtube');
+export const InstagramIcon = CreateIconComponent(instagram, 'Instagram');
 // export const MediumFlagIcon = CreateIconComponent(mediumFlag, 'Medium Flag');
 
 // Export all icons as a collection
@@ -69,6 +83,13 @@ const Icons = {
   TextFileIcon,
   HighFlagIcon,
   LowFlagIcon,
+  MailBoxIcon,
+  Building2Icon,
+  FacebookIcon,
+  LinkedinIcon,
+  XIcon,
+  YoutubeIcon,
+  InstagramIcon,
   // MediumFlagIcon,
 };
 

@@ -133,13 +133,13 @@ function OverviewTodo({ user }: OverviewTodoProps) {
   const getPriorityColor = (priority: TodoItem['priority']) => {
     switch (priority) {
       case 'H':
-        return <HighFlagIcon className="w-6 h-6" />;
+        return <HighFlagIcon className="w-5 h-5" />;
       case 'M':
-        return <LowFlagIcon className="w-6 h-6" />;
+        return <LowFlagIcon className="w-5 h-5" />;
       case 'L':
-        return <LowFlagIcon className="w-6 h-6" />;
+        return <LowFlagIcon className="w-5 h-5" />;
       default:
-        return <LowFlagIcon className="w-6 h-6" />;
+        return <LowFlagIcon className="w-5 h-5" />;
     }
   };
 
