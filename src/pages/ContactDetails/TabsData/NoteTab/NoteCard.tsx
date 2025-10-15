@@ -1,6 +1,8 @@
+import AttachmentCard from '@/components/AttachmentCard';
+import { MediumFlagIcon } from '@/components/Icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { NoteItem } from '@/interfaces';
-import { Edit2, File, Maximize2, MoreHorizontal, Trash2 } from 'lucide-react';
+import { PenLine, Trash } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 export default function NoteCard({ note }: { note: NoteItem }) {
@@ -44,16 +46,20 @@ export default function NoteCard({ note }: { note: NoteItem }) {
                 {note.author.name}
               </p>
               <span className="text-xs text-[#71717A]">{note.timestamp}</span>
-              <span className="text-xs">🏳️</span>
-              <span className="text-[10px] leading-none px-1.5 py-0.5 rounded bg-[#E6F7F0] text-[#0EA5E9]">
-                H
-              </span>
+              <div className="flex items-center ">
+                {note.flag === 'H' && (
+                  <>
+                    <MediumFlagIcon className="w-4" />{' '}
+                    <span className="text-xs font-medium">H</span>
+                  </>
+                )}
+              </div>
             </div>
 
             <p className="mt-1 text-sm leading-6 text-[#3F3F46]">
               {displayText.split(/(@[A-Za-z0-9_]+)/g).map((chunk, i) =>
                 chunk.startsWith('@') ? (
-                  <span key={i} className="text-[#0EA5E9] font-medium">
+                  <span key={i} className="text-[#009B6A] font-medium">
                     {chunk}
                   </span>
                 ) : (
@@ -74,57 +80,22 @@ export default function NoteCard({ note }: { note: NoteItem }) {
               <div className="mt-3 flex gap-3">
                 {note.attachments.map((att) => (
                   <div key={att.id} className="shrink-0">
-                    {att.kind === 'image' ? (
-                      <div className="group relative w-[130px] h-[130px] rounded-2xl overflow-hidden border border-[#E4E4E7] bg-white shadow-sm">
-                        <img
-                          src={att.src}
-                          alt={att.name}
-                          className="h-full w-full object-cover"
-                        />
-
-                        <button className="absolute right-2 top-2 inline-flex items-center justify-center size-8 rounded-xl bg-white/90 border border-[#E4E4E7] shadow-sm text-[#18181B] hover:bg-white">
-                          <MoreHorizontal className="size-4" />
-                        </button>
-
-                        <button className="absolute right-2 top-1/2 -translate-y-1/2 hidden group-hover:inline-flex items-center justify-center size-8 rounded-xl bg-white/90 border border-[#E4E4E7] shadow-sm text-[#18181B] hover:bg-white">
-                          <Maximize2 className="size-4" />
-                        </button>
-
-                        <div className="absolute inset-x-0 bottom-0">
-                          <div className="mx-2 mb-2 rounded-lg border border-[#E4E4E7] bg-white px-3 py-1.5 text-xs text-[#3F3F46] shadow-sm truncate">
-                            {formatFilename(att.name)}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="relative w-[130px] h-[130px] rounded-2xl overflow-hidden border border-[#E4E4E7] bg-[#EEF2F5] shadow-sm">
-                        <button className="absolute right-2 top-2 inline-flex items-center justify-center size-8 rounded-xl bg-white/90 border border-[#E4E4E7] shadow-sm text-[#18181B] hover:bg-white">
-                          <MoreHorizontal className="size-4" />
-                        </button>
-                        <div className="h-full w-full flex items-center justify-center">
-                          <div className="flex items-center justify-center size-12 rounded-full bg-white border border-[#E4E4E7]">
-                            <File className="size-6 text-[#3F3F46]" />
-                          </div>
-                        </div>
-                        <div className="absolute inset-x-0 bottom-0">
-                          <div className="mx-2 mb-2 rounded-lg border border-[#E4E4E7] bg-white px-3 py-1.5 text-xs text-[#3F3F46] shadow-sm truncate">
-                            {formatFilename(att.name)}
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    <AttachmentCard
+                      attachment={att}
+                      formatFilename={formatFilename}
+                    />
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-[#71717A]">
+          <div className="flex items-center gap-8 text-[#71717A]">
             <button className="hover:text-[#18181B]">
-              <Edit2 className="size-4" />
+              <PenLine className="size-4" />
             </button>
             <button className="hover:text-[#DC2626]">
-              <Trash2 className="size-4" />
+              <Trash className="size-4" />
             </button>
           </div>
         </div>

@@ -40,6 +40,7 @@ interface Attachment {
 interface NoteItem {
   id: string;
   author: { name: string; avatar: string };
+  flag?: 'H' | 'M' | 'L';
   timestamp: string;
   text: string;
   attachments?: Attachment[];

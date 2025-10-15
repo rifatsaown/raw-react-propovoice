@@ -16,7 +16,7 @@ import whatsapp from './assets/whatsapp.svg';
 import textFile from './assets/textFile.svg';
 import highFlag from './assets/highFlag.svg';
 import lowFlag from './assets/lowFlag.svg';
-// import mediumFlag from './assets/mediumFlag.svg';
+import mediumFlag from './assets/mediumFlag.svg';
 import mailBox from './assets/mailBox.svg';
 import building from './assets/building.svg';
 import facebook from './assets/facebook.svg';
@@ -61,7 +61,7 @@ export const LinkedinIcon = CreateIconComponent(linkedin, 'Linkedin');
 export const XIcon = CreateIconComponent(x, 'X');
 export const YoutubeIcon = CreateIconComponent(youtube, 'Youtube');
 export const InstagramIcon = CreateIconComponent(instagram, 'Instagram');
-// export const MediumFlagIcon = CreateIconComponent(mediumFlag, 'Medium Flag');
+export const MediumFlagIcon = CreateIconComponent(mediumFlag, 'Medium Flag');
 
 // Export all icons as a collection
 const Icons = {
@@ -90,7 +90,7 @@ const Icons = {
   XIcon,
   YoutubeIcon,
   InstagramIcon,
-  // MediumFlagIcon,
+  MediumFlagIcon,
 };
 
 export default Icons;

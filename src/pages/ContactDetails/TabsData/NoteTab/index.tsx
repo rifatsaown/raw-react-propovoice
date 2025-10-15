@@ -10,6 +10,7 @@ const initialNotes: NoteItem[] = [
       name: 'Gias Uddin',
       avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
     },
+    flag: 'H',
     timestamp: '16 May, 6:00 PM',
     text: 'The United States has been the backbone of the industry, accounting for most North American revenue, which has an estimated global share of 40.0%. Improving business conditions has resulted in businesses attaining extra funds to spend on consultants. Emerging markets like Brazil, Russia, India, and China, also known as the BRIC nations, have provided a source of funds to spend on consultants. They are expected to lead the way in the future. These markets are expected to have a significant impact on the global economy in the coming years. They are expected to lead the way in the future. These markets are expected to have a significant impact on the global economy in the coming years. ',
   },
@@ -19,6 +20,7 @@ const initialNotes: NoteItem[] = [
       name: 'Gias Uddin',
       avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
     },
+    
     timestamp: '16 May, 6:00 PM',
     text: '@Abbas Improving business conditions has resulted in businesses attaining extra funds to spend on consultants. Emerging markets like Brazil, Russia, India, and China, also known as the BRIC nations. 😍',
     attachments: [
@@ -38,6 +40,7 @@ const initialNotes: NoteItem[] = [
       name: 'Abbas',
       avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
     },
+    flag: 'H',
     timestamp: '16 May, 6:00 PM',
     text: 'The United States has been the backbone of the industry, accounting for most North American revenue, which has an estimated global share of 40.0%. Improving business conditions has resulted in businesses attaining extra funds to spend on consultants. Emerging markets like Brazil, Russia, India, and China, also known as the BRIC nations, have provided a source of....',
     tint: 'muted',
