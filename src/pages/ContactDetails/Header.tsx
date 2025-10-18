@@ -28,7 +28,7 @@ export default function ContactDetailsHeader({
   const navigate = useNavigate();
 
   return (
-    <div className="w-full flex flex-col gap-3 sm:gap-2 py-4 px-4 sm:px-16 bg-white border-b border-gray-100">
+    <div className="w-full flex flex-col gap-3 sm:gap-2 py-4 px-4 sm:px-16 bg-white">
       {/* First Row: Back and Title */}
       <div className="flex items-center gap-2 min-h-[32px]">
         <Button

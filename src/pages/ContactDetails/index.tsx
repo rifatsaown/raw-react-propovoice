@@ -11,7 +11,7 @@ import {
   Receipt,
   ShoppingBag,
 } from 'lucide-react';
-import { Suspense, useCallback, useMemo, useState } from 'react';
+import { Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import ContactDetailsHeader from './Header';
 import ConversationTab from './TabsData/ConversationTab';
 import DealsTab from './TabsData/DealsTab';
@@ -140,6 +140,47 @@ const TabContentLoader = () => (
 export default function ContactDetails() {
   const tabData = useTabData();
   const [activeTab, setActiveTab] = useState('overview');
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  // Handle mouse down - start dragging
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+    // Disable text selection while dragging
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.style.scrollBehavior = 'auto';
+    }
+  };
+
+  // Handle mouse leave - stop dragging
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.style.scrollBehavior = 'smooth';
+    }
+  };
+
+  // Handle mouse up - stop dragging
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.style.scrollBehavior = 'smooth';
+    }
+  };
+
+  // Handle mouse move - scroll while dragging
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // Smoother scrolling multiplier
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
 
   // Memoized tab content to prevent unnecessary re-renders
   const renderTabContent = useCallback((tabValue: string) => {
@@ -164,16 +205,25 @@ export default function ContactDetails() {
           {/* Tabs List */}
           <div className="relative">
             <div
-              className="overflow-x-auto scrollbar-hide "
-              style={{ WebkitOverflowScrolling: 'touch' }}
+              ref={scrollContainerRef}
+              className={`overflow-x-auto scrollbar-hide`}
+              style={{
+                WebkitOverflowScrolling: 'touch',
+                scrollBehavior: 'smooth',
+                userSelect: isDragging ? 'none' : 'auto',
+              }}
+              onMouseDown={handleMouseDown}
+              onMouseLeave={handleMouseLeave}
+              onMouseUp={handleMouseUp}
+              onMouseMove={handleMouseMove}
             >
-              <TabsList className="flex  w-max bg-transparent border-none px-4 sm:px-16 h-auto min-h-[50px]">
+              <TabsList className="flex w-max bg-transparent  px-4 sm:px-16 h-auto min-h-[50px]">
                 {tabData.map((tab) => (
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
                     className={`
-                      group flex items-center gap-2 px-4 sm:px-6 py-4 mx-0.5 rounded-t-2xl rounded-b-none 
+                      group flex items-center gap-2 px-2 py-1.5 mx-0.5 rounded-t-2xl rounded-b-none 
                       text-sm sm:text-base font-normal whitespace-nowrap border-none 
                       transition-all duration-150 bg-transparent flex-shrink-0
                       data-[state=active]:bg-[#F4F4F5] data-[state=active]:shadow-[inset_0_2px_8px_0_rgba(0,0,0,0.07)] 
@@ -215,7 +265,7 @@ export default function ContactDetails() {
           </div>
 
           {/* Tab Content with loading states */}
-          <div className="min-h-[400px] bg-[#F4F4F5] -mt-3">
+          <div className="min-h-[400px] bg-[#F4F4F5] -mt-4">
             {tabData.map((tab) => (
               <TabsContent
                 key={tab.value}
