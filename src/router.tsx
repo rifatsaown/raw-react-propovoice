@@ -36,7 +36,7 @@ export const router = createHashRouter([
         element: <div>Userprofile info</div>,
       },
       {
-        path: '/dev-docs',
+        path: '/help',
         element: <DevDocs />,
       },
     ],
