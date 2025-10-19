@@ -1,0 +1,118 @@
+{
+  "team": [
+    { "id": 1, "name": "Team Member 1" },
+    { "id": 2, "name": "Team Member 2" },
+    { "id": 3, "name": "Team Member 3" }
+  ],
+  "columns": {
+    "QUALIFICATION": [
+      {
+        "id": "task1",
+        "title": "Tazkia Foundation Onboard...",
+        "status": "COLD",
+        "daysAgo": 20,
+        "clientAvatar": null,
+        "dueDate": "2025-02",
+        "industry": ["webdesign", "Design"],
+        "design": true,
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ],
+    "NEED ANALYSIS": [
+      {
+        "id": "task2",
+        "title": "Tazkia Foundation Onboard...",
+        "status": "COLD",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 50,
+        "priority": "High",
+        "team": [1, 2, 3]
+      },
+      {
+        "id": "task3",
+        "title": "Tazkia Foundation Onboard...",
+        "status": "WARM",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 65,
+        "industry": ["Telehealth"],
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ],
+    "PROPOSAL": [
+      {
+        "id": "task4",
+        "title": "Tazkia Foundation Onboard...",
+        "status": "WARM",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "priority": "High",
+        "team": [1, 2, 3]
+      },
+      {
+        "id": "task5",
+        "title": "Tazkia Foundation Onboard...",
+        "status": "HOT",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "industry": ["Telehealth"],
+        "priority": "High",
+        "team": [1, 2, 3]
+      },
+      {
+        "id": "task8",
+        "title": "Tazkia Foundation Onboard...",
+        "status": "HOT",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "industry": ["Telehealth"],
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ],
+    "CLOSED WON": [
+      {
+        "id": "task6",
+        "title": "Tazkia Foundation Onboard...",
+        "status": "WARM",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ],
+    "CLOSED LOST": [
+      {
+        "id": "task7",
+        "title": "Tazkia Foundation Onboard...",
+        "status": "COLD",
+        "daysAgo": 10,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ]
+  }
+}

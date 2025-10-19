@@ -6,172 +6,55 @@ import type {
   DragOverEvent,
   DragStartEvent,
 } from '@dnd-kit/core';
-import { closestCenter, DndContext, DragOverlay } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { Calendar, ListFilter, Plus, Rows3 } from 'lucide-react';
+  Calendar,
+  Calendar as CalendarIcon,
+  ChevronDown,
+  Flag,
+  ListFilter,
+  Menu,
+  Plus,
+  Rows3,
+  User,
+  Users,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import Column from './Column';
-import TaskCard from './TaskCard';
-import type {
-  Columns,
-  DatabaseUpdateResponse,
-  Task,
-  TaskMovement,
-  TeamMember,
-} from './types';
+import { loadSalesPipelineData, saveSalesPipelineData } from './api/mockApi';
+import type { Columns, Task, TaskMovement } from './types';
+import { CalendarView, ListView, PipelineView } from './views';
 
-// Sample team members data
-const team: TeamMember[] = [
-  { id: 1, name: 'Team Member 1' },
-  { id: 2, name: 'Team Member 2' },
-  { id: 3, name: 'Team Member 3' },
-];
-
-// Mock API function to simulate saving data to a database
-const updateTaskInDatabase = (
-  taskData: Columns
-): Promise<DatabaseUpdateResponse> => {
-  return new Promise((resolve) => {
-    // Simulate network delay
-    setTimeout(() => {
-      console.log(`API Call: Database updated with new state`, taskData);
-      console.log('Database updated successfully');
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
-// This structure has columns as keys, and arrays of task objects as values
-const sampleData: Columns = {
-  // Qualification stage - first step in the sales pipeline
-  QUALIFICATION: [
-    {
-      id: 'task1',
-      title: 'Tazkia Foundation Onboard...',
-      status: 'COLD',
-      daysAgo: 20,
-      // client: 'Nasir Uddin',
-      clientAvatar: null,
-      dueDate: '2025-02',
-      industry: ['webdesign', 'Design'],
-      design: true,
-      priority: 'High',
-      team: team,
-    },
-  ],
-  // Need Analysis stage - understanding client requirements
-  'NEED ANALYSIS': [
-    {
-      id: 'task2',
-      title: 'Tazkia Foundation Onboard...',
-      status: 'COLD',
-      daysAgo: 20,
-      client: 'Nasir Uddin',
-      clientAvatar: null,
-      projectedValue: 50000,
-      probability: 50,
-      priority: 'High',
-      team: team,
-    },
-    {
-      id: 'task3',
-      title: 'Tazkia Foundation Onboard...',
-      status: 'WARM',
-      daysAgo: 20,
-      client: 'Nasir Uddin',
-      clientAvatar: null,
-      projectedValue: 50000,
-      probability: 65,
-      industry: ['Telehealth'],
-      priority: 'High',
-      team: team,
-    },
-  ],
-  // Proposal stage
-  PROPOSAL: [
-    {
-      id: 'task4',
-      title: 'Tazkia Foundation Onboard...',
-      status: 'WARM',
-      daysAgo: 20,
-      client: 'Nasir Uddin',
-      clientAvatar: null,
-      projectedValue: 50000,
-      probability: 25,
-      priority: 'High',
-      team: team,
-    },
-    {
-      id: 'task5',
-      title: 'Tazkia Foundation Onboard...',
-      status: 'HOT',
-      daysAgo: 20,
-      client: 'Nasir Uddin',
-      clientAvatar: null,
-      projectedValue: 50000,
-      probability: 25,
-      industry: ['Telehealth'],
-      priority: 'High',
-      team: team,
-    },
-    {
-      id: 'task8',
-      title: 'Tazkia Foundation Onboard...',
-      status: 'HOT',
-      daysAgo: 20,
-      client: 'Nasir Uddin',
-      clientAvatar: null,
-      projectedValue: 50000,
-      probability: 25,
-      industry: ['Telehealth'],
-      priority: 'High',
-      team: team,
-    },
-  ],
-  // Closed Won stage - successful deals
-  'CLOSED WON': [
-    {
-      id: 'task6',
-      title: 'Tazkia Foundation Onboard...',
-      status: 'WARM',
-      daysAgo: 20,
-      client: 'Nasir Uddin',
-      clientAvatar: null,
-      projectedValue: 50000,
-      probability: 25,
-      priority: 'High',
-      team: team,
-    },
-  ],
-  // Closed Lost stage - unsuccessful deals
-  'CLOSED LOST': [
-    {
-      id: 'task7',
-      title: 'Tazkia Foundation Onboard...',
-      status: 'COLD',
-      daysAgo: 10,
-      client: 'Nasir Uddin',
-      clientAvatar: null,
-      projectedValue: 50000,
-      probability: 25,
-      priority: 'High',
-      team: team,
-    },
-  ],
-};
+// View types
+type ViewType = 'pipeline' | 'list' | 'calendar';
 
 export default function SelesPipeline() {
-  const [columns, setColumns] = useState<Columns>(sampleData); // State to track current column data
+  const [columns, setColumns] = useState<Columns>({}); // State to track current column data
   const [activeId, setActiveId] = useState<string | null>(null); // State to track which task is currently being dragged
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [currentView, setCurrentView] = useState<ViewType>('pipeline');
+  const [showFilterButtons, setShowFilterButtons] = useState<boolean>(false);
 
   // Track if the columns were actually changed by a user action
   const columnsChanged = useRef<boolean>(false);
   const lastChangedTask = useRef<TaskMovement | null>(null);
+
+  // Load initial data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await loadSalesPipelineData();
+        setColumns(data.columns);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   // Effect to call API when columns state changes and it was triggered by a user action
   useEffect(() => {
@@ -191,7 +74,7 @@ export default function SelesPipeline() {
       }
 
       // Call the API
-      updateTaskInDatabase(columns)
+      saveSalesPipelineData(columns)
         .then(() => {
           setIsUpdating(false);
           // Reset the flag after successful update
@@ -434,119 +317,300 @@ export default function SelesPipeline() {
     });
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <main className="min-h-screen p-4 mx-11 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7F56D9] mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading sales pipeline...</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main className={`min-h-screen p-4 mx-11`}>
-      {isUpdating && (
-        <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow z-50">
-          Updating database...
+    <>
+      <style>
+        {`
+          @keyframes slideInFromRight {
+            0% {
+              opacity: 0;
+              transform: translateX(20px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+          
+          @keyframes slideOutToRight {
+            0% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+            100% {
+              opacity: 0;
+              transform: translateX(20px);
+            }
+          }
+          
+          @keyframes slideInFromLeft {
+            0% {
+              opacity: 0;
+              transform: translateX(-20px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+          
+          @keyframes slideOutToLeft {
+            0% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+            100% {
+              opacity: 0;
+              transform: translateX(-20px);
+            }
+          }
+        `}
+      </style>
+      <main className={`min-h-screen p-4 mx-11`}>
+        {isUpdating && (
+          <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow z-50">
+            Updating database...
+          </div>
+        )}
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-xl font-bold">Sales Pipeline</h2>
+          <div className="flex items-center gap-1">
+            <Button variant="outline" className="rounded-lg" onClick={() => {}}>
+              Create Stage
+            </Button>
+            <Button
+              variant="default"
+              onClick={() => {}}
+              className="px-3 py-2 gap-1 rounded-lg bg-[#7F56D9] text-white text-sm font-semibold shadow-[0px_1px_2px_rgba(16,24,40,0.05),_inset_0px_0px_0px_1px_rgba(16,24,40,0.18),_inset_0px_-2px_0px_rgba(16,24,40,0.05)]"
+            >
+              <Plus strokeWidth={3} className="w-5 h-5 text-white" />
+              Create Deal
+            </Button>
+          </div>
         </div>
-      )}
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-bold">Sales Pipeline</h2>
-        <div className="flex items-center gap-1">
-          <Button variant="outline" className="rounded-lg" onClick={() => {}}>
-            Create Stage
-          </Button>
-          <Button
-            variant="default"
-            onClick={() => {}}
-            className="px-3 py-2 gap-1 rounded-lg bg-[#7F56D9] text-white text-sm font-semibold shadow-[0px_1px_2px_rgba(16,24,40,0.05),_inset_0px_0px_0px_1px_rgba(16,24,40,0.18),_inset_0px_-2px_0px_rgba(16,24,40,0.05)]"
-          >
-            <Plus strokeWidth={3} className="w-5 h-5 text-white" />
-            Create Deal
-          </Button>
-        </div>
-      </div>
 
-      <div className="flex items-center justify-between mb-7">
-        <div className="flex items-center gap-2">
-          <ButtonGroup>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-[#344054] font-normal"
-              onClick={() => {}}
-            >
-              <AlignStart2Icon className='w-4 h-4' />
-              Pipeline View
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-[#344054] font-normal"
-              onClick={() => {}}
-            >
-              <Rows3 color="#667085" className="mt-0.5" />
-              List View
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-[#344054] font-normal"
-              onClick={() => {}}
-            >
-              <Calendar color="#667085" className="mt-0.5" />
-              Calendar View
-            </Button>
-          </ButtonGroup>
-        </div>
-        <div>
-          <Button
-            type="button"
-            size='sm'
-            variant="outline"
-            onClick={() => {}}
-            className="text-[#344054] font-medium rounded-lg"
-          >
-            <ListFilter className='w-4 h-4' color='#344054' />
-            More filters
-          </Button>
-        </div>
-      </div>
-
-      {/* DndContext provides the drag-and-drop functionality */}
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        {/* Horizontal scroll row for columns */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {/* Map over each column and create a sortable context for its tasks */}
-          {Object.keys(columns).map((key) => (
-            <div key={key} className="min-w-[200px] md:min-w-[250px] min-h-[80vh]">
-              <SortableContext
-                items={columns[key].map((item: Task) => item.id)}
-                strategy={verticalListSortingStrategy}
+        <div className="flex items-center justify-between mb-7">
+          <div className="flex items-center gap-2">
+            <ButtonGroup>
+              <Button
+                variant= "outline"
+                size="sm"
+                className={`font-normal ${
+                  currentView === 'pipeline'
+                    ? 'bg-[#F9FAFB] text-[#344054] border border-gray-300'
+                    : 'text-[#344054]'
+                }`}
+                onClick={() => setCurrentView('pipeline')}
               >
-                <Column title={key} tasks={columns[key]} />
-              </SortableContext>
-            </div>
-          ))}
-          {/* Add Stage placeholder tile on the far right */}
-          <div className="min-w-[200px] md:min-w-[250px]">
-            <div
-              className="rounded-2xl border-2 border-dashed border-gray-300 bg-white/50 hover:bg-white transition-colors p-1 h-full flex flex-col items-center justify-center cursor-pointer"
-              onClick={handleAddStage}
-              aria-label="Add stage"
-              role="button"
-            >
-              <Button variant="outline" size="sm" className="text-[#344054] font-normal rounded-lg">
-              <Plus color='#98A2B3' className='w-4 h-4' />
-              <span className='text-sm font-medium'>Add stage</span> 
+                <AlignStart2Icon className="w-4 h-4" />
+                Pipeline View
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className={`font-normal ${
+                  currentView === 'list'
+                    ? 'bg-[#F9FAFB] text-[#344054] border border-gray-300'
+                    : 'text-[#344054]'
+                }`}
+                onClick={() => setCurrentView('list')}
+              >
+                <Rows3
+                  color={currentView === 'list' ? '#344054' : '#667085'}
+                  className="mt-0.5"
+                />
+                List View
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className={`font-normal ${
+                  currentView === 'calendar'
+                    ? 'bg-[#F9FAFB] text-[#344054] border border-gray-300'
+                    : 'text-[#344054]'
+                }`}
+                onClick={() => setCurrentView('calendar')}
+              >
+                <Calendar
+                  color={currentView === 'calendar' ? '#344054' : '#667085'}
+                  className="mt-0.5"
+                />
+                Calendar View
+              </Button>
+            </ButtonGroup>
+          </div>
+          <div className="flex items-center gap-4 overflow-hidden relative">
+            {/* More Filters Button */}
+            <div
+              className={`transition-all duration-500 ease-in-out ${
+                !showFilterButtons
+                  ? 'opacity-100 translate-x-0 scale-100'
+                  : 'opacity-0 -translate-x-8 scale-95 absolute pointer-events-none'
+              }`}
+            >
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setShowFilterButtons(true)}
+                className="text-[#344054] font-medium rounded-lg transition-all duration-300 hover:shadow-lg"
+              >
+                <ListFilter className="w-4 h-4" color="#344054" />
+                More filters
+              </Button>
+            </div>
+
+            {/* Filters Section */}
+            <div
+              className={`transition-all duration-500 ease-in-out ${
+                showFilterButtons
+                  ? 'opacity-100 translate-x-0 scale-100'
+                  : 'opacity-0 translate-x-8 scale-95 absolute pointer-events-none'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                {/* Filters Label */}
+                <button
+                  onClick={() => setShowFilterButtons(false)}
+                  className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md"
+                >
+                  <Menu className="w-4 h-4 text-[#344054]" />
+                  <span className="text-sm font-medium text-[#344054]">
+                    Filters
+                  </span>
+                </button>
+
+                {/* Filter Buttons */}
+                <div className="flex items-center gap-1">
+                  {/* Lead Type Filter */}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {}}
+                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
+                    style={{
+                      animationDelay: showFilterButtons ? '0.1s' : '0s',
+                      animation: showFilterButtons
+                        ? 'slideInFromRight 0.4s ease-out forwards'
+                        : 'none',
+                    }}
+                  >
+                    <Users className="w-4 h-4" color="#344054" />
+                    Lead Type
+                    <ChevronDown className="w-4 h-4" color="#344054" />
+                  </Button>
+
+                  {/* Deal Owner Filter */}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {}}
+                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
+                    style={{
+                      animationDelay: showFilterButtons ? '0.15s' : '0s',
+                      animation: showFilterButtons
+                        ? 'slideInFromRight 0.4s ease-out forwards'
+                        : 'none',
+                    }}
+                  >
+                    <User className="w-4 h-4" color="#344054" />
+                    Deal Owner
+                    <ChevronDown className="w-4 h-4" color="#344054" />
+                  </Button>
+
+                  {/* Assignee Filter */}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {}}
+                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
+                    style={{
+                      animationDelay: showFilterButtons ? '0.2s' : '0s',
+                      animation: showFilterButtons
+                        ? 'slideInFromRight 0.4s ease-out forwards'
+                        : 'none',
+                    }}
+                  >
+                    <Users className="w-4 h-4" color="#344054" />
+                    Assignee
+                    <ChevronDown className="w-4 h-4" color="#344054" />
+                  </Button>
+
+                  {/* Height Filter */}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {}}
+                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
+                    style={{
+                      animationDelay: showFilterButtons ? '0.25s' : '0s',
+                      animation: showFilterButtons
+                        ? 'slideInFromRight 0.4s ease-out forwards'
+                        : 'none',
+                    }}
+                  >
+                    <Flag className="w-4 h-4" color="#344054" />
+                    Height
+                    <ChevronDown className="w-4 h-4" color="#344054" />
+                  </Button>
+
+                  {/* Created Date Filter */}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {}}
+                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
+                    style={{
+                      animationDelay: showFilterButtons ? '0.3s' : '0s',
+                      animation: showFilterButtons
+                        ? 'slideInFromRight 0.4s ease-out forwards'
+                        : 'none',
+                    }}
+                  >
+                    <CalendarIcon className="w-4 h-4" color="#344054" />
+                    Created Date
+                    <ChevronDown className="w-4 h-4" color="#344054" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* DragOverlay shows a preview of the task being dragged */}
-        <DragOverlay>
-          {activeId && findTask(activeId) ? (
-            <TaskCard task={findTask(activeId)!} />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
-    </main>
+        {/* Conditional rendering based on current view */}
+        {currentView === 'pipeline' && (
+          <PipelineView
+            columns={columns}
+            activeId={activeId}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+            onAddStage={handleAddStage}
+            findTask={findTask}
+          />
+        )}
+
+        {currentView === 'list' && <ListView columns={columns} />}
+
+        {currentView === 'calendar' && <CalendarView />}
+      </main>
+    </>
   );
 }

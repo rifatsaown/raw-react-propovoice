@@ -1,4 +1,5 @@
-import type { Attachment } from '@/interfaces';
+import React from 'react';
+import type { Attachment } from '../../interfaces';
 import { FileText, Maximize2, MoreVertical } from 'lucide-react';
 
 interface AttachmentCardProps {
