@@ -189,8 +189,10 @@ export default function ContactDetails() {
 
     return (
       <Suspense fallback={<TabContentLoader />}>
-        <div className="p-4 sm:p-6 min-h-screen lg:mx-15">
+        <div className="p-4 sm:p-6 min-h-screen lg:mx-10">
+          <div className="max-w-[1400px] mx-auto">
           <TabComponent contact={mockContact} />
+          </div>
         </div>
       </Suspense>
     );

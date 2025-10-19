@@ -1,32 +1,34 @@
-import Sidebar from "@/components/Sidebar";
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import Sidebar from '@/components/Sidebar';
+import { Button } from '@/components/ui/button';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { closeSidebar, toggleOpen } from '@/store/sidebarSlice';
+import { Menu } from 'lucide-react';
+import { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 
 const MainLayouts = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isOpen = useAppSelector((state) => state.sidebar.isOpen);
+  const dispatch = useAppDispatch();
 
   // Close sidebar on window resize to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        setSidebarOpen(false);
+        // Only close the sidebar if it's open, don't affect collapse state
+        if (isOpen) {
+          dispatch(closeSidebar());
+        }
       }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen, dispatch]);
 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+      <Sidebar isOpen={isOpen} onToggle={() => dispatch(toggleOpen())} />
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -35,9 +37,10 @@ const MainLayouts = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={toggleSidebar}
+            onClick={() => dispatch(toggleOpen())}
             className="h-8 w-8"
-            aria-label="Open sidebar">
+            aria-label="Open sidebar"
+          >
             <Menu className="w-4 h-4" />
           </Button>
           <div className="ml-3 text-lg font-semibold text-gray-800">

@@ -24,7 +24,9 @@ import linkedin from './assets/linkedin.svg';
 import x from './assets/fi_X.svg';
 import youtube from './assets/youtube.svg';
 import instagram from './assets/instagram.svg';
+import alignStart2 from './assets/align-top-02.svg';
 import CreateIconComponent from './CreateIconComponent';
+
 
 // Create icon components using the factory function
 export const MyTaskIcon = CreateIconComponent(myTask, 'My Task');
@@ -62,6 +64,7 @@ export const XIcon = CreateIconComponent(x, 'X');
 export const YoutubeIcon = CreateIconComponent(youtube, 'Youtube');
 export const InstagramIcon = CreateIconComponent(instagram, 'Instagram');
 export const MediumFlagIcon = CreateIconComponent(mediumFlag, 'Medium Flag');
+export const AlignStart2Icon = CreateIconComponent(alignStart2, 'Align Start 2');
 
 // Export all icons as a collection
 const Icons = {
@@ -91,6 +94,7 @@ const Icons = {
   YoutubeIcon,
   InstagramIcon,
   MediumFlagIcon,
+  AlignStart2Icon,
 };
 
 export default Icons;

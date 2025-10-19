@@ -1,4 +1,4 @@
-import AttachmentCard from '@/components/AttachmentCard';
+import AttachmentCard from '@/components/Cards/AttachmentCard';
 import { MediumFlagIcon } from '@/components/Icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { NoteItem } from '@/interfaces';
