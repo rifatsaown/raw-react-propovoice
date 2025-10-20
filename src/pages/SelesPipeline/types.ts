@@ -45,6 +45,16 @@ export interface TaskMovement {
   position: number;
 }
 
+export interface PipelineViewProps {
+  columns: Columns;
+  activeId: string | null;
+  onDragStart: (event: DragStartEvent) => void;
+  onDragOver: (event: DragOverEvent) => void;
+  onDragEnd: (event: DragEndEvent) => void;
+  onAddStage: () => void;
+  findTask: (id: string) => Task | undefined;
+}
+
 // ============================================================================
 // COMPONENT PROPS INTERFACES
 // ============================================================================

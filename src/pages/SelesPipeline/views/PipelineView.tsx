@@ -1,28 +1,13 @@
 import { Button } from '@/components/ui/button';
-import type {
-  DragEndEvent,
-  DragOverEvent,
-  DragStartEvent,
-} from '@dnd-kit/core';
 import { closestCenter, DndContext, DragOverlay } from '@dnd-kit/core';
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
-import Column from '../Column';
-import TaskCard from '../TaskCard';
-import type { Columns, Task } from '../types';
-
-interface PipelineViewProps {
-  columns: Columns;
-  activeId: string | null;
-  onDragStart: (event: DragStartEvent) => void;
-  onDragOver: (event: DragOverEvent) => void;
-  onDragEnd: (event: DragEndEvent) => void;
-  onAddStage: () => void;
-  findTask: (id: string) => Task | undefined;
-}
+import type { PipelineViewProps, Task } from '../types';
+import Column from './Column';
+import TaskCard from './TaskCard';
 
 export default function PipelineView({
   columns,

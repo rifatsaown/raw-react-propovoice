@@ -195,6 +195,7 @@ export default function ContactTable() {
                     allSelected ? true : someSelected ? 'indeterminate' : false
                   }
                   onCheckedChange={toggleAllRows}
+                  className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 data-[state=indeterminate]:bg-transparent data-[state=indeterminate]:border-gray-300 border-gray-300"
                 />
                 <span className="flex items-center gap-1 uppercase">
                   Contact Name
@@ -229,6 +230,7 @@ export default function ContactTable() {
                     onCheckedChange={(checked) =>
                       toggleRowSelection(contact.id, !!checked)
                     }
+                    className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 border-gray-300"
                   />
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">

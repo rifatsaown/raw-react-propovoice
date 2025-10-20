@@ -1,5 +1,6 @@
 import ContactBook from '@/pages/ContactBook';
 import ContactDetails from '@/pages/ContactDetails';
+import DealDetails from '@/pages/DealDetails';
 import ErrorPage from '@/pages/error/Error';
 import Home from '@/pages/home';
 import MainLayouts from '@/pages/Layouts/MainLayouts';
@@ -30,6 +31,10 @@ export const router = createHashRouter([
       {
         path: '/contact-details/:id',
         element: <ContactDetails />,
+      },
+      {
+        path: '/deal-details/:dealID',
+        element: <DealDetails />,
       },
       {
         path: '/profile-info',

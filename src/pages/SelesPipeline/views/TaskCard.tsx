@@ -1,12 +1,14 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { X } from 'lucide-react';
-import type { TaskCardProps } from './types';
-import { STATUS_COLORS } from './types';
+import { useNavigate } from 'react-router-dom';
+import type { TaskCardProps } from '../types';
+import { STATUS_COLORS } from '../types';
 
 export default function TaskCard({ task }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: task.id });
+  const navigate = useNavigate();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -43,12 +45,35 @@ export default function TaskCard({ task }: TaskCardProps) {
       </div>
 
       {/* Title */}
-      <h3
-        className="font-medium text-sm mb-2 text-gray-800 truncate"
-        title={task.title}
+      <div
+        className="mb-2"
+        onClick={(e) => {
+          console.log('Task clicked:', task.id);
+          e.stopPropagation();
+          navigate(`/deal-details/${task.id}`);
+        }}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+        onTouchStart={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
       >
-        {task.title}
-      </h3>
+        <h3
+          className="font-medium text-sm text-gray-800 truncate cursor-pointer hover:text-[#7F56D9] transition-colors duration-200"
+          title={task.title}
+        >
+          {task.title.length > 25
+            ? `${task.title.substring(0, 25)}...`
+            : task.title}
+        </h3>
+      </div>
 
       {/* Client Info */}
       {task.client && (

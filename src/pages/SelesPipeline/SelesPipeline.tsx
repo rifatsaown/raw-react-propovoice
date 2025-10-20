@@ -20,7 +20,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { loadSalesPipelineData, saveSalesPipelineData } from './api/mockApi';
+import { loadSalesPipelineData} from './api/mockApi';
 import type { Columns, Task, TaskMovement } from './types';
 import { CalendarView, ListView, PipelineView } from './views';
 
@@ -30,7 +30,7 @@ type ViewType = 'pipeline' | 'list' | 'calendar';
 export default function SelesPipeline() {
   const [columns, setColumns] = useState<Columns>({}); // State to track current column data
   const [activeId, setActiveId] = useState<string | null>(null); // State to track which task is currently being dragged
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  // const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentView, setCurrentView] = useState<ViewType>('pipeline');
   const [showFilterButtons, setShowFilterButtons] = useState<boolean>(false);
@@ -57,13 +57,13 @@ export default function SelesPipeline() {
   }, []);
 
   // Effect to call API when columns state changes and it was triggered by a user action
-  useEffect(() => {
+/*   useEffect(() => {
     // Only proceed if columns were changed by a user action and we're not already updating
     if (columnsChanged.current && !isUpdating) {
       setIsUpdating(true);
 
       // Log the specific changes if we have the information
-      if (lastChangedTask.current) {
+     if (lastChangedTask.current) {
         const { taskId, fromColumn, toColumn, position } =
           lastChangedTask.current;
         console.log(
@@ -71,9 +71,9 @@ export default function SelesPipeline() {
         );
       } else {
         console.log('Columns state updated');
-      }
+      } 
 
-      // Call the API
+      // Call the API to save the data to the database
       saveSalesPipelineData(columns)
         .then(() => {
           setIsUpdating(false);
@@ -85,9 +85,9 @@ export default function SelesPipeline() {
           setIsUpdating(false);
           // Reset the flag even on error
           columnsChanged.current = false;
-        });
+        }); 
     }
-  }, [columns, isUpdating]);
+  }, [columns, isUpdating]); */
 
   // Helper function to find which column contains a specific task ID
   // Returns the column key (e.g., "QUALIFICATION", "PROPOSAL", etc.)
@@ -379,11 +379,11 @@ export default function SelesPipeline() {
         `}
       </style>
       <main className={`min-h-screen p-4 mx-11`}>
-        {isUpdating && (
+        {/* {isUpdating && (
           <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow z-50">
             Updating database...
           </div>
-        )}
+        )} */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl font-bold">Sales Pipeline</h2>
           <div className="flex items-center gap-1">
