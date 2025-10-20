@@ -55,7 +55,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
       startDate,
       startTime,
     });
-  }, [startDate, startTime, form.reset]);
+  }, [startDate, startTime, form]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onToggle}>
