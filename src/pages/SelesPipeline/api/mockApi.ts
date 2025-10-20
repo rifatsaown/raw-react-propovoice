@@ -1,4 +1,5 @@
-import sampleData from '../data/sampleData.json';
+import columnsJson from '../data/columns.json';
+import teamJson from '../data/team.json';
 import type {
   Columns,
   DatabaseUpdateResponse,
@@ -18,20 +19,23 @@ const transformTeamIds = (
 };
 
 // Transform the JSON data to match our TypeScript interfaces
-const transformData = (data: typeof sampleData) => {
+const transformData = (
+  columnsData: typeof columnsJson,
+  teamData: typeof teamJson
+) => {
   const transformedColumns: Columns = {};
 
-  Object.entries(data.columns).forEach(([columnName, tasks]) => {
+  Object.entries(columnsData).forEach(([columnName, tasks]) => {
     transformedColumns[columnName] = tasks.map((task) => ({
       ...task,
       status: task.status as TaskStatus,
-      team: transformTeamIds(task.team as number[], data.team),
+      team: transformTeamIds(task.team as number[], teamData),
     })) as Task[];
   });
 
   return {
     columns: transformedColumns,
-    team: data.team,
+    team: teamData,
   };
 };
 
@@ -43,7 +47,7 @@ export const loadSalesPipelineData = (): Promise<{
   return new Promise((resolve) => {
     // Simulate network delay
     setTimeout(() => {
-      const transformedData = transformData(sampleData);
+      const transformedData = transformData(columnsJson, teamJson);
       resolve(transformedData);
     }, 500);
   });
