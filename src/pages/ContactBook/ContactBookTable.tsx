@@ -28,7 +28,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Function to get contact type styling based on type
 function getContactTypeStyle(type: string): string {
@@ -68,6 +68,7 @@ const allContacts = makeContacts(137);
 const ROW_OPTIONS = [10, 20, 50, 100];
 
 export default function ContactTable() {
+  const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(20);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
@@ -223,13 +224,18 @@ export default function ContactTable() {
           </TableHeader>
           <TableBody>
             {paginated.map((contact) => (
-              <TableRow key={contact.id}>
+              <TableRow
+                key={contact.id}
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => navigate(`/contact-details/${contact.id}`)}
+              >
                 <TableCell className="flex items-center gap-2 px-4">
                   <Checkbox
                     checked={selectedRows.includes(contact.id)}
                     onCheckedChange={(checked) =>
                       toggleRowSelection(contact.id, !!checked)
                     }
+                    onClick={(e) => e.stopPropagation()}
                     className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 border-gray-300"
                   />
                   <div className="flex items-center gap-3">
@@ -243,12 +249,9 @@ export default function ContactTable() {
                       )}
                     </Avatar>
                     <div className="space-y-0.5">
-                      <Link
-                        to={`/contact-details/${contact.id}`}
-                        className="text-sm font-medium leading-none"
-                      >
+                      <p className="text-sm font-medium leading-none">
                         {contact.name}
-                      </Link>
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         {contact.email}
                       </p>
@@ -269,7 +272,10 @@ export default function ContactTable() {
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
+                  <div
+                    className="flex justify-end gap-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Button size="icon" variant="outline" className="h-8 w-8">
                       <MailPlus className="w-4 h-4" />
                     </Button>
