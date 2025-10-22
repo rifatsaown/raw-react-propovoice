@@ -379,11 +379,6 @@ export default function SelesPipeline() {
         `}
       </style>
       <main className={`min-h-screen p-4 mx-11`}>
-        {/* {isUpdating && (
-          <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow z-50">
-            Updating database...
-          </div>
-        )} */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl font-bold">Sales Pipeline</h2>
           <div className="flex items-center gap-1">
