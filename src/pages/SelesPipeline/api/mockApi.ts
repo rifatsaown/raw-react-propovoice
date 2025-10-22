@@ -23,10 +23,21 @@ const transformData = (
   columnsData: typeof columnsJson,
   teamData: typeof teamJson
 ) => {
-  const transformedColumns: Columns = {};
+  const transformedColumns: { open: Columns; closed: Columns } = {
+    open: {},
+    closed: {},
+  };
 
-  Object.entries(columnsData).forEach(([columnName, tasks]) => {
-    transformedColumns[columnName] = tasks.map((task) => ({
+  // columnsData now has 'open' and 'closed' keys
+  Object.entries(columnsData.open).forEach(([columnName, tasks]) => {
+    transformedColumns.open[columnName] = tasks.map((task) => ({
+      ...task,
+      status: task.status as TaskStatus,
+      team: transformTeamIds(task.team as number[], teamData),
+    })) as Task[];
+  });
+  Object.entries(columnsData.closed).forEach(([columnName, tasks]) => {
+    transformedColumns.closed[columnName] = tasks.map((task) => ({
       ...task,
       status: task.status as TaskStatus,
       team: transformTeamIds(task.team as number[], teamData),
@@ -41,7 +52,7 @@ const transformData = (
 
 // Mock API function to load initial data
 export const loadSalesPipelineData = (): Promise<{
-  columns: Columns;
+  columns: { open: Columns; closed: Columns };
   team: TeamMember[];
 }> => {
   return new Promise((resolve) => {
@@ -54,9 +65,10 @@ export const loadSalesPipelineData = (): Promise<{
 };
 
 // Mock API function to save data
-export const saveSalesPipelineData = (
-  columns: Columns
-): Promise<DatabaseUpdateResponse> => {
+export const saveSalesPipelineData = (columns: {
+  open: Columns;
+  closed: Columns;
+}): Promise<DatabaseUpdateResponse> => {
   return new Promise((resolve) => {
     // Simulate network delay
     setTimeout(() => {
