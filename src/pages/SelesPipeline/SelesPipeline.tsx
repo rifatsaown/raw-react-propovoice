@@ -1,6 +1,8 @@
 import { AlignStart2Icon } from '@/components/Icons';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { setCollapsed } from '@/store/sidebarSlice';
 import type {
   DragEndEvent,
   DragOverEvent,
@@ -20,7 +22,8 @@ import {
   Users,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { loadSalesPipelineData} from './api/mockApi';
+import { loadSalesPipelineData } from './api/mockApi';
+import { PipelineSubSidebar } from './components/PipelineSubSidebar';
 import type { Columns, Task, TaskMovement } from './types';
 import { CalendarView, ListView, PipelineView } from './views';
 
@@ -38,6 +41,27 @@ export default function SelesPipeline() {
   // Track if the columns were actually changed by a user action
   const columnsChanged = useRef<boolean>(false);
   const lastChangedTask = useRef<TaskMovement | null>(null);
+
+  // Redux hooks for sidebar management
+  const dispatch = useAppDispatch();
+  const isMainSidebarCollapsed = useAppSelector(
+    (state) => state.sidebar.isCollapsed
+  );
+
+  // Collapse main sidebar when entering this page and restore on unmount
+  useEffect(() => {
+    // Save the previous state
+    const previousCollapsedState = isMainSidebarCollapsed;
+
+    // Collapse the main sidebar
+    dispatch(setCollapsed(true));
+
+    // Cleanup: restore the previous state when leaving this page
+    return () => {
+      dispatch(setCollapsed(previousCollapsedState));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - only run on mount/unmount
 
   // Load initial data on component mount
   useEffect(() => {
@@ -57,7 +81,7 @@ export default function SelesPipeline() {
   }, []);
 
   // Effect to call API when columns state changes and it was triggered by a user action
-/*   useEffect(() => {
+  /*   useEffect(() => {
     // Only proceed if columns were changed by a user action and we're not already updating
     if (columnsChanged.current && !isUpdating) {
       setIsUpdating(true);
@@ -376,9 +400,35 @@ export default function SelesPipeline() {
               transform: translateX(-20px);
             }
           }
+          
+          @keyframes slideInFromLeft {
+            from {
+              opacity: 0;
+              transform: translateX(-100%);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
         `}
       </style>
-      <main className={`min-h-screen p-4 mx-11`}>
+
+      {/* Pipeline Sub-Sidebar */}
+      <div
+        className="animate-in slide-in-from-left duration-300"
+        style={{
+          animation: 'slideInFromLeft 0.3s ease-out',
+        }}
+      >
+        <PipelineSubSidebar />
+      </div>
+
+      <main
+        className={`min-h-screen p-4 transition-all duration-300 ${
+          isMainSidebarCollapsed ? 'ml-60' : 'ml-12'
+        }`}
+      >
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl font-bold">Sales Pipeline</h2>
           <div className="flex items-center gap-1">
@@ -400,7 +450,7 @@ export default function SelesPipeline() {
           <div className="flex items-center gap-2">
             <ButtonGroup>
               <Button
-                variant= "outline"
+                variant="outline"
                 size="sm"
                 className={`font-normal ${
                   currentView === 'pipeline'
