@@ -1,5 +1,6 @@
 import { WhatsappIcon } from '@/components/Icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -131,57 +132,115 @@ export default function ContactTable() {
   };
 
   return (
-    <>
-      {/* Selection Bar */}
+    <div
+      className={`${
+        selectedRows.length > 0 ? 'pb-28' : ''
+      } transition-all duration-500 ease-out`}
+    >
+      {/* Floating Selection Panel */}
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out ${
           selectedRows.length > 0
-            ? 'max-h-20 opacity-100'
-            : 'max-h-0 opacity-0 mb-0'
+            ? 'bottom-6 opacity-100 translate-y-0 scale-100'
+            : 'bottom-0 opacity-0 translate-y-12 scale-95 pointer-events-none'
         }`}
       >
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-1 bg-[#71717A] text-white rounded-[8px]"
-            >
-              <Rocket className="w-4 h-4" />
-              Send Mail
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex items-center gap-1"
-            >
-              <FolderSymlink className="w-4 h-4" />
-              Add to List
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex items-center gap-1"
-            >
-              <MailCheck className="w-4 h-4" />
-              Send a Mail
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex items-center gap-1"
-            >
-              <WhatsappIcon className="w-4 h-4" />
-              Send WhatsApp Message
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex items-center gap-1 text-red-500 hover:text-red-600 hover:bg-red-50"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </Button>
+        <div className="rounded-2xl bg-white drop-shadow-2xl">
+          <div className="pl-1 pr-4 py-3">
+            <div className="flex items-center gap-3">
+              {/* Selection Counter */}
+              <div className="flex items-center gap-2 px-4 py-2">
+                <Badge className="bg-[#009B6A] text-white font-semibold rounded-full flex items-center justify-center border-none pb-1 hover:bg-[#009B6A]">
+                  {selectedRows.length}
+                </Badge>
+                <span className="text-sm font-normal whitespace-nowrap">
+                  Item Selected
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide text-[#18181B]">
+                <Button
+                  size="sm"
+                  className="flex flex-col items-center justify-center gap-1 bg-[#71717A] text-white rounded-xl hover:bg-[#374151] transition-all duration-200 h-auto py-3 px-4 min-w-[80px]"
+                >
+                  <Rocket className="w-5 h-5" />
+                  <span className="text-xs font-medium whitespace-nowrap">
+                    Send Mail
+                  </span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="flex flex-col items-center justify-center gap-1 hover:bg-gray-100 rounded-xl transition-all duration-200 h-auto py-3 px-4 min-w-[80px]"
+                >
+                  <FolderSymlink className="w-5 h-5" />
+                  <span className="text-xs font-medium whitespace-nowrap">
+                    Add to List
+                  </span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="flex flex-col items-center justify-center gap-1 hover:bg-gray-100 rounded-xl transition-all duration-200 h-auto py-3 px-4 min-w-[80px]"
+                >
+                  <MailCheck className="w-5 h-5" />
+                  <span className="text-xs font-medium whitespace-nowrap">
+                    Add To List
+                  </span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="flex flex-col items-center justify-center gap-1 hover:bg-gray-100 rounded-xl transition-all duration-200 h-auto py-3 px-4 min-w-[80px]"
+                >
+                  <MailCheck className="w-5 h-5" />
+                  <span className="text-xs font-medium whitespace-nowrap">
+                    Send a Mail
+                  </span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="flex flex-col items-center justify-center gap-1 hover:bg-gray-100 rounded-xl transition-all duration-200 h-auto py-3 px-4 min-w-[80px]"
+                >
+                  <MailCheck className="w-5 h-5" />
+                  <span className="text-xs font-medium whitespace-nowrap">
+                    Send a Mail
+                  </span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="flex flex-col items-center justify-center gap-1 hover:bg-gray-100 rounded-xl transition-all duration-200 h-auto py-3 px-4 min-w-[100px]"
+                >
+                  <WhatsappIcon className="w-4 h-4" />
+                  <span className="text-xs font-medium whitespace-nowrap ">
+                    WhatsApp Message
+                  </span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="flex flex-col items-center justify-center gap-1 hover:bg-gray-100 rounded-xl transition-all duration-200 h-auto py-3"
+                >
+                  <Trash2 className="w-5 h-5" />
+                  <span className="text-xs font-medium whitespace-nowrap">
+                    Delete
+                  </span>
+                </Button>
+
+                {/* Close Button */}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSelectedRows([])}
+                  className="flex items-center justify-center rounded-xl hover:bg-gray-100 transition-all duration-200 h-auto p-3"
+                >
+                  <span className="text-xl">✕</span>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -382,6 +441,6 @@ export default function ContactTable() {
           </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
