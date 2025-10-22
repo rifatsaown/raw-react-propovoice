@@ -18,8 +18,10 @@ import {
   Menu,
   Plus,
   Rows3,
+  Settings,
   User,
   Users,
+  X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { loadSalesPipelineData } from './api/mockApi';
@@ -37,6 +39,7 @@ export default function SelesPipeline() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentView, setCurrentView] = useState<ViewType>('pipeline');
   const [showFilterButtons, setShowFilterButtons] = useState<boolean>(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
 
   // Track if the columns were actually changed by a user action
   const columnsChanged = useRef<boolean>(false);
@@ -79,6 +82,26 @@ export default function SelesPipeline() {
 
     loadData();
   }, []);
+
+  // Handle escape key for mobile sidebar
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showMobileSidebar) {
+        setShowMobileSidebar(false);
+      }
+    };
+
+    if (showMobileSidebar) {
+      document.addEventListener('keydown', handleKeyDown);
+      // Prevent body scroll when sidebar is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showMobileSidebar]);
 
   // Effect to call API when columns state changes and it was triggered by a user action
   /*   useEffect(() => {
@@ -344,7 +367,7 @@ export default function SelesPipeline() {
   // Show loading state
   if (isLoading) {
     return (
-      <main className="min-h-screen p-4 mx-11 flex items-center justify-center">
+      <main className="min-h-screen p-4 sm:p-6 md:px-8 lg:px-12 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7F56D9] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading sales pipeline...</p>
@@ -411,12 +434,80 @@ export default function SelesPipeline() {
               transform: translateX(0);
             }
           }
+          
+          .scrollbar-hide {
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+          }
+          .scrollbar-hide::-webkit-scrollbar { 
+            display: none;  /* Safari and Chrome */
+          }
+          
+          @keyframes slideInFromLeft {
+            from {
+              transform: translateX(-100%);
+            }
+            to {
+              transform: translateX(0);
+            }
+          }
+          
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+          }
+          
+          .mobile-sidebar-enter {
+            animation: slideInFromLeft 0.3s ease-out forwards;
+          }
+          
+          .mobile-sidebar-backdrop {
+            animation: fadeIn 0.3s ease-out forwards;
+          }
         `}
       </style>
 
-      {/* Pipeline Sub-Sidebar */}
+      {/* Mobile Sidebar Overlay */}
+      {showMobileSidebar && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm mobile-sidebar-backdrop"
+            onClick={() => setShowMobileSidebar(false)}
+          />
+
+          {/* Sidebar */}
+          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-xl mobile-sidebar-enter">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Pipeline Settings
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-2 hover:bg-gray-100"
+                onClick={() => setShowMobileSidebar(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto">
+              <PipelineSubSidebar />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pipeline Sub-Sidebar - Hidden on mobile */}
       <div
-        className="animate-in slide-in-from-left duration-300"
+        className="hidden lg:block animate-in slide-in-from-left duration-300"
         style={{
           animation: 'slideInFromLeft 0.3s ease-out',
         }}
@@ -425,14 +516,29 @@ export default function SelesPipeline() {
       </div>
 
       <main
-        className={`min-h-screen p-4 transition-all duration-300 ${
-          isMainSidebarCollapsed ? 'ml-60' : 'ml-12'
-        }`}
+        className={`min-h-screen p-4 sm:p-6 md:px-8 lg:px-12 transition-all duration-300 ${
+          isMainSidebarCollapsed ? 'lg:ml-60' : 'lg:ml-12'
+        } ml-0 sm:ml-0 md:ml-0`}
       >
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-bold">Sales Pipeline</h2>
-          <div className="flex items-center gap-1">
-            <Button variant="outline" className="rounded-lg" onClick={() => {}}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
+          <div className="flex items-center gap-3">
+            {/* Mobile Sidebar Toggle Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="lg:hidden p-2 rounded-lg border-gray-300"
+              onClick={() => setShowMobileSidebar(true)}
+            >
+              <Settings className="w-4 h-4" color="#344054" />
+            </Button>
+            <h2 className="text-xl font-bold">Sales Pipeline</h2>
+          </div>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-1">
+            <Button
+              variant="outline"
+              className="rounded-lg text-sm"
+              onClick={() => {}}
+            >
               Create Stage
             </Button>
             <Button
@@ -446,13 +552,13 @@ export default function SelesPipeline() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-7">
-          <div className="flex items-center gap-2">
-            <ButtonGroup>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 lg:mb-7">
+          <div className="flex items-center gap-2 overflow-x-auto">
+            <ButtonGroup className="flex-shrink-0">
               <Button
                 variant="outline"
                 size="sm"
-                className={`font-normal ${
+                className={`font-normal text-xs sm:text-sm whitespace-nowrap ${
                   currentView === 'pipeline'
                     ? 'bg-[#F9FAFB] text-[#344054] border border-gray-300'
                     : 'text-[#344054]'
@@ -460,12 +566,13 @@ export default function SelesPipeline() {
                 onClick={() => setCurrentView('pipeline')}
               >
                 <AlignStart2Icon className="w-4 h-4" />
-                Pipeline View
+                <span className="hidden sm:inline">Pipeline View</span>
+                <span className="sm:hidden">Pipeline</span>
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className={`font-normal ${
+                className={`font-normal text-xs sm:text-sm whitespace-nowrap ${
                   currentView === 'list'
                     ? 'bg-[#F9FAFB] text-[#344054] border border-gray-300'
                     : 'text-[#344054]'
@@ -476,12 +583,13 @@ export default function SelesPipeline() {
                   color={currentView === 'list' ? '#344054' : '#667085'}
                   className="mt-0.5"
                 />
-                List View
+                <span className="hidden sm:inline">List View</span>
+                <span className="sm:hidden">List</span>
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className={`font-normal ${
+                className={`font-normal text-xs sm:text-sm whitespace-nowrap ${
                   currentView === 'calendar'
                     ? 'bg-[#F9FAFB] text-[#344054] border border-gray-300'
                     : 'text-[#344054]'
@@ -492,14 +600,15 @@ export default function SelesPipeline() {
                   color={currentView === 'calendar' ? '#344054' : '#667085'}
                   className="mt-0.5"
                 />
-                Calendar View
+                <span className="hidden sm:inline">Calendar View</span>
+                <span className="sm:hidden">Calendar</span>
               </Button>
             </ButtonGroup>
           </div>
-          <div className="flex items-center gap-4 overflow-hidden relative">
+          <div className="flex items-center gap-2 overflow-hidden relative w-full lg:w-auto">
             {/* More Filters Button */}
             <div
-              className={`transition-all duration-500 ease-in-out ${
+              className={`transition-all duration-500 ease-in-out flex-shrink-0 ${
                 !showFilterButtons
                   ? 'opacity-100 translate-x-0 scale-100'
                   : 'opacity-0 -translate-x-8 scale-95 absolute pointer-events-none'
@@ -510,26 +619,27 @@ export default function SelesPipeline() {
                 size="sm"
                 variant="outline"
                 onClick={() => setShowFilterButtons(true)}
-                className="text-[#344054] font-medium rounded-lg transition-all duration-300 hover:shadow-lg"
+                className="text-[#344054] font-medium rounded-lg transition-all duration-300 hover:shadow-lg text-xs sm:text-sm whitespace-nowrap"
               >
                 <ListFilter className="w-4 h-4" color="#344054" />
-                More filters
+                <span className="hidden sm:inline">More filters</span>
+                <span className="sm:hidden">Filters</span>
               </Button>
             </div>
 
             {/* Filters Section */}
             <div
-              className={`transition-all duration-500 ease-in-out ${
+              className={`transition-all duration-500 ease-in-out w-full ${
                 showFilterButtons
                   ? 'opacity-100 translate-x-0 scale-100'
                   : 'opacity-0 translate-x-8 scale-95 absolute pointer-events-none'
               }`}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full">
                 {/* Filters Label */}
                 <button
                   onClick={() => setShowFilterButtons(false)}
-                  className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md"
+                  className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex-shrink-0 self-start sm:self-center"
                 >
                   <Menu className="w-4 h-4 text-[#344054]" />
                   <span className="text-sm font-medium text-[#344054]">
@@ -537,102 +647,107 @@ export default function SelesPipeline() {
                   </span>
                 </button>
 
-                {/* Filter Buttons */}
-                <div className="flex items-center gap-1">
-                  {/* Lead Type Filter */}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {}}
-                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
-                    style={{
-                      animationDelay: showFilterButtons ? '0.1s' : '0s',
-                      animation: showFilterButtons
-                        ? 'slideInFromRight 0.4s ease-out forwards'
-                        : 'none',
-                    }}
-                  >
-                    <Users className="w-4 h-4" color="#344054" />
-                    Lead Type
-                    <ChevronDown className="w-4 h-4" color="#344054" />
-                  </Button>
+                {/* Filter Buttons - Scrollable on mobile */}
+                <div className="flex items-center gap-1 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
+                  <div className="flex gap-1 flex-nowrap">
+                    {/* Lead Type Filter */}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {}}
+                      className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
+                      style={{
+                        animationDelay: showFilterButtons ? '0.1s' : '0s',
+                        animation: showFilterButtons
+                          ? 'slideInFromRight 0.4s ease-out forwards'
+                          : 'none',
+                      }}
+                    >
+                      <Users className="w-4 h-4" color="#344054" />
+                      <span className="hidden sm:inline">Lead Type</span>
+                      <span className="sm:hidden">Lead</span>
+                      <ChevronDown className="w-4 h-4" color="#344054" />
+                    </Button>
 
-                  {/* Deal Owner Filter */}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {}}
-                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
-                    style={{
-                      animationDelay: showFilterButtons ? '0.15s' : '0s',
-                      animation: showFilterButtons
-                        ? 'slideInFromRight 0.4s ease-out forwards'
-                        : 'none',
-                    }}
-                  >
-                    <User className="w-4 h-4" color="#344054" />
-                    Deal Owner
-                    <ChevronDown className="w-4 h-4" color="#344054" />
-                  </Button>
+                    {/* Deal Owner Filter */}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {}}
+                      className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
+                      style={{
+                        animationDelay: showFilterButtons ? '0.15s' : '0s',
+                        animation: showFilterButtons
+                          ? 'slideInFromRight 0.4s ease-out forwards'
+                          : 'none',
+                      }}
+                    >
+                      <User className="w-4 h-4" color="#344054" />
+                      <span className="hidden sm:inline">Deal Owner</span>
+                      <span className="sm:hidden">Owner</span>
+                      <ChevronDown className="w-4 h-4" color="#344054" />
+                    </Button>
 
-                  {/* Assignee Filter */}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {}}
-                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
-                    style={{
-                      animationDelay: showFilterButtons ? '0.2s' : '0s',
-                      animation: showFilterButtons
-                        ? 'slideInFromRight 0.4s ease-out forwards'
-                        : 'none',
-                    }}
-                  >
-                    <Users className="w-4 h-4" color="#344054" />
-                    Assignee
-                    <ChevronDown className="w-4 h-4" color="#344054" />
-                  </Button>
+                    {/* Assignee Filter */}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {}}
+                      className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
+                      style={{
+                        animationDelay: showFilterButtons ? '0.2s' : '0s',
+                        animation: showFilterButtons
+                          ? 'slideInFromRight 0.4s ease-out forwards'
+                          : 'none',
+                      }}
+                    >
+                      <Users className="w-4 h-4" color="#344054" />
+                      Assignee
+                      <ChevronDown className="w-4 h-4" color="#344054" />
+                    </Button>
 
-                  {/* Height Filter */}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {}}
-                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
-                    style={{
-                      animationDelay: showFilterButtons ? '0.25s' : '0s',
-                      animation: showFilterButtons
-                        ? 'slideInFromRight 0.4s ease-out forwards'
-                        : 'none',
-                    }}
-                  >
-                    <Flag className="w-4 h-4" color="#344054" />
-                    Height
-                    <ChevronDown className="w-4 h-4" color="#344054" />
-                  </Button>
+                    {/* Height Filter */}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {}}
+                      className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
+                      style={{
+                        animationDelay: showFilterButtons ? '0.25s' : '0s',
+                        animation: showFilterButtons
+                          ? 'slideInFromRight 0.4s ease-out forwards'
+                          : 'none',
+                      }}
+                    >
+                      <Flag className="w-4 h-4" color="#344054" />
+                      Height
+                      <ChevronDown className="w-4 h-4" color="#344054" />
+                    </Button>
 
-                  {/* Created Date Filter */}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {}}
-                    className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
-                    style={{
-                      animationDelay: showFilterButtons ? '0.3s' : '0s',
-                      animation: showFilterButtons
-                        ? 'slideInFromRight 0.4s ease-out forwards'
-                        : 'none',
-                    }}
-                  >
-                    <CalendarIcon className="w-4 h-4" color="#344054" />
-                    Created Date
-                    <ChevronDown className="w-4 h-4" color="#344054" />
-                  </Button>
+                    {/* Created Date Filter */}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {}}
+                      className="text-[#344054] font-normal rounded-lg border-gray-300 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md text-xs sm:text-sm whitespace-nowrap flex-shrink-0"
+                      style={{
+                        animationDelay: showFilterButtons ? '0.3s' : '0s',
+                        animation: showFilterButtons
+                          ? 'slideInFromRight 0.4s ease-out forwards'
+                          : 'none',
+                      }}
+                    >
+                      <CalendarIcon className="w-4 h-4" color="#344054" />
+                      <span className="hidden sm:inline">Created Date</span>
+                      <span className="sm:hidden">Date</span>
+                      <ChevronDown className="w-4 h-4" color="#344054" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

@@ -18,6 +18,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
   BookOpen,
   ChevronDown,
   ChevronUp,
@@ -215,7 +221,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   };
 
   return (
-    <>
+    <TooltipProvider>
       {/* Mobile overlay */}
       {isOpen && (
         <div
@@ -232,7 +238,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           h-screen border-r border-[#E4E4E7] bg-white font-['Inter']
           transform transition-all duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          ${isCollapsed ? 'w-16' : 'w-64'}
+          w-64 ${isCollapsed ? 'lg:w-16' : 'lg:w-64'}
           lg:relative lg:transform-none
           shadow-lg lg:shadow-none
           overflow-hidden
@@ -243,10 +249,11 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
         {/* Header with mobile close + collapse/expand control */}
         <div
           className={`flex flex-col flex-shrink-0 transition-all duration-300 ${
-            isCollapsed ? 'px-2 py-3' : 'px-4 py-3'
+            isCollapsed ? 'lg:px-2 lg:py-3 px-4 py-3' : 'px-4 py-3'
           }`}
         >
-          {!isCollapsed && (
+          {/* Always show expanded header on mobile, respect collapsed state on desktop */}
+          <div className={`lg:${isCollapsed ? 'hidden' : 'block'} block`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <img src={logo} alt="Logo" className="w-8 h-8 flex-shrink-0" />
@@ -263,8 +270,9 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <PanelRightOpen className="w-4 h-4 text-gray-600" />
               </Button>
             </div>
-          )}
-          {isCollapsed && (
+          </div>
+          {/* Only show collapsed header on desktop when collapsed */}
+          <div className={`hidden lg:${isCollapsed ? 'block' : 'hidden'}`}>
             <div className="flex flex-col items-center space-y-2">
               <img
                 src={logo}
@@ -275,57 +283,125 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hidden lg:flex h-8 w-8"
+                className="h-8 w-8"
                 onClick={toggleCollapse}
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               >
                 <PanelLeftOpen className="w-4 h-4 text-gray-600" />
               </Button>
             </div>
-          )}
+          </div>
         </div>
 
         <ScrollArea
           className={`overflow-hidden transition-all duration-300 ${
-            isCollapsed ? 'h-[calc(100vh-120px)]' : 'h-[calc(100vh-80px)]'
+            isCollapsed
+              ? 'lg:h-[calc(100vh-120px)] h-[calc(100vh-80px)]'
+              : 'h-[calc(100vh-80px)]'
           }`}
         >
           <nav
             className={`flex flex-col transition-all duration-300 ${
-              isCollapsed ? 'px-1 py-6 space-y-3' : 'px-2 py-4'
+              isCollapsed
+                ? 'lg:px-1 lg:py-6 lg:space-y-3 px-2 py-4'
+                : 'px-2 py-4'
             }`}
           >
             {menu.map((section, sectionIndex) => (
               <div
                 key={sectionIndex}
-                className={isCollapsed ? 'space-y-3' : 'space-y-[2px]'}
+                className={
+                  isCollapsed ? 'lg:space-y-3 space-y-[2px]' : 'space-y-[2px]'
+                }
               >
-                {section.label && !isCollapsed && (
-                  <div className="text-xs font-medium text-[#00000066] px-3 pt-3 pb-1">
+                {section.label && (
+                  <div
+                    className={`text-xs font-medium text-[#00000066] px-3 pt-3 pb-1 ${
+                      isCollapsed ? 'lg:hidden block' : 'block'
+                    }`}
+                  >
                     {section.label}
                   </div>
                 )}
                 {section.items.map((item, itemIndex) => (
                   <div key={itemIndex} className="flex flex-col relative">
                     {item.path ? (
-                      <Link
-                        to={item.path}
-                        onClick={handleLinkClick}
-                        className={`flex items-center rounded-md cursor-pointer transition-all duration-300 hover:bg-muted text-[#09090B] ${
-                          isCollapsed
-                            ? 'justify-center px-2 h-[28px]'
-                            : 'gap-3 px-3 h-[28px] text-sm'
-                        } ${
-                          isItemActive(item)
-                            ? 'bg-gray-100 font-semibold'
-                            : 'font-medium'
-                        }`}
-                        aria-current={isItemActive(item) ? 'page' : undefined}
-                        title={isCollapsed ? item.title : undefined}
-                      >
-                        <item.icon className="w-4 h-4 text-muted-foreground" />
-                        {!isCollapsed && (
-                          <>
+                      isCollapsed ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link
+                              to={item.path}
+                              onClick={handleLinkClick}
+                              className={`flex items-center rounded-md cursor-pointer transition-all duration-300 hover:bg-muted text-[#09090B] ${
+                                isCollapsed
+                                  ? 'lg:justify-center lg:px-2 lg:h-[28px] gap-3 px-3 h-[28px] text-sm'
+                                  : 'gap-3 px-3 h-[28px] text-sm'
+                              } ${
+                                isItemActive(item)
+                                  ? 'bg-gray-100 font-semibold'
+                                  : 'font-medium'
+                              }`}
+                              aria-current={
+                                isItemActive(item) ? 'page' : undefined
+                              }
+                            >
+                              <item.icon className="w-4 h-4 text-muted-foreground" />
+                              <div
+                                className={`flex items-center gap-3 flex-1 ${
+                                  isCollapsed ? 'lg:hidden flex' : 'flex'
+                                }`}
+                              >
+                                <span className="flex-1 truncate">
+                                  {item.title}
+                                </span>
+                                {item.badge && (
+                                  <Badge
+                                    variant="outline"
+                                    className={`text-xs px-2 py-0.5 ${
+                                      item.active
+                                        ? 'border-black'
+                                        : getBadgeColorClass(item.title)
+                                    }`}
+                                  >
+                                    {item.badge}
+                                  </Badge>
+                                )}
+                              </div>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="top"
+                            className="hidden lg:block"
+                          >
+                            <p>{item.title}</p>
+                            {item.badge && (
+                              <span className="ml-2 text-xs opacity-75">
+                                ({item.badge})
+                              </span>
+                            )}
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <Link
+                          to={item.path}
+                          onClick={handleLinkClick}
+                          className={`flex items-center rounded-md cursor-pointer transition-all duration-300 hover:bg-muted text-[#09090B] ${
+                            isCollapsed
+                              ? 'lg:justify-center lg:px-2 lg:h-[28px] gap-3 px-3 h-[28px] text-sm'
+                              : 'gap-3 px-3 h-[28px] text-sm'
+                          } ${
+                            isItemActive(item)
+                              ? 'bg-gray-100 font-semibold'
+                              : 'font-medium'
+                          }`}
+                          aria-current={isItemActive(item) ? 'page' : undefined}
+                        >
+                          <item.icon className="w-4 h-4 text-muted-foreground" />
+                          <div
+                            className={`flex items-center gap-3 flex-1 ${
+                              isCollapsed ? 'lg:hidden flex' : 'flex'
+                            }`}
+                          >
                             <span className="flex-1 truncate">
                               {item.title}
                             </span>
@@ -341,19 +417,83 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                                 {item.badge}
                               </Badge>
                             )}
-                          </>
-                        )}
-                      </Link>
+                          </div>
+                        </Link>
+                      )
+                    ) : isCollapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() =>
+                              item.items &&
+                              (window.innerWidth < 1024 || !isCollapsed) &&
+                              toggleExpand(sectionIndex, itemIndex)
+                            }
+                            className={`flex items-center rounded-md cursor-pointer transition-all duration-300 hover:bg-muted text-[#09090B] w-full text-left ${
+                              isCollapsed
+                                ? 'lg:justify-center lg:px-2 lg:h-[28px] gap-3 px-3 h-[28px] text-sm'
+                                : 'gap-3 px-3 h-[28px] text-sm'
+                            } ${
+                              isItemActive(item)
+                                ? 'bg-gray-100 font-bold'
+                                : 'font-medium'
+                            }`}
+                            aria-expanded={
+                              item.items &&
+                              (window.innerWidth < 1024 || !isCollapsed)
+                                ? isExpanded(sectionIndex, itemIndex)
+                                : undefined
+                            }
+                          >
+                            <item.icon className="w-4 h-4 text-muted-foreground" />
+                            <div
+                              className={`flex items-center gap-3 flex-1 ${
+                                isCollapsed ? 'lg:hidden flex' : 'flex'
+                              }`}
+                            >
+                              <span className="flex-1 truncate">
+                                {item.title}
+                              </span>
+                              {item.badge && (
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs px-2 py-0.5 ${
+                                    item.active
+                                      ? 'border-black'
+                                      : getBadgeColorClass(item.title)
+                                  }`}
+                                >
+                                  {item.badge}
+                                </Badge>
+                              )}
+                              {item.items &&
+                                (isExpanded(sectionIndex, itemIndex) ? (
+                                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                                ) : (
+                                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                                ))}
+                            </div>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="hidden lg:block">
+                          <p>{item.title}</p>
+                          {item.badge && (
+                            <span className="ml-2 text-xs opacity-75">
+                              ({item.badge})
+                            </span>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
                     ) : (
                       <button
                         onClick={() =>
                           item.items &&
-                          !isCollapsed &&
+                          (window.innerWidth < 1024 || !isCollapsed) &&
                           toggleExpand(sectionIndex, itemIndex)
                         }
                         className={`flex items-center rounded-md cursor-pointer transition-all duration-300 hover:bg-muted text-[#09090B] w-full text-left ${
                           isCollapsed
-                            ? 'justify-center px-2 h-[28px]'
+                            ? 'lg:justify-center lg:px-2 lg:h-[28px] gap-3 px-3 h-[28px] text-sm'
                             : 'gap-3 px-3 h-[28px] text-sm'
                         } ${
                           isItemActive(item)
@@ -361,43 +501,43 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                             : 'font-medium'
                         }`}
                         aria-expanded={
-                          item.items && !isCollapsed
+                          item.items &&
+                          (window.innerWidth < 1024 || !isCollapsed)
                             ? isExpanded(sectionIndex, itemIndex)
                             : undefined
                         }
-                        title={isCollapsed ? item.title : undefined}
                       >
                         <item.icon className="w-4 h-4 text-muted-foreground" />
-                        {!isCollapsed && (
-                          <>
-                            <span className="flex-1 truncate">
-                              {item.title}
-                            </span>
-                            {item.badge && (
-                              <Badge
-                                variant="outline"
-                                className={`text-xs px-2 py-0.5 ${
-                                  item.active
-                                    ? 'border-black'
-                                    : getBadgeColorClass(item.title)
-                                }`}
-                              >
-                                {item.badge}
-                              </Badge>
-                            )}
-                            {item.items &&
-                              (isExpanded(sectionIndex, itemIndex) ? (
-                                <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                              ))}
-                          </>
-                        )}
+                        <div
+                          className={`flex items-center gap-3 flex-1 ${
+                            isCollapsed ? 'lg:hidden flex' : 'flex'
+                          }`}
+                        >
+                          <span className="flex-1 truncate">{item.title}</span>
+                          {item.badge && (
+                            <Badge
+                              variant="outline"
+                              className={`text-xs px-2 py-0.5 ${
+                                item.active
+                                  ? 'border-black'
+                                  : getBadgeColorClass(item.title)
+                              }`}
+                            >
+                              {item.badge}
+                            </Badge>
+                          )}
+                          {item.items &&
+                            (isExpanded(sectionIndex, itemIndex) ? (
+                              <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                            ))}
+                        </div>
                       </button>
                     )}
                     {item.items &&
                       isExpanded(sectionIndex, itemIndex) &&
-                      !isCollapsed && (
+                      (window.innerWidth < 1024 || !isCollapsed) && (
                         <div className="ml-6 mt-1 space-y-[2px]">
                           {item.items.map((subItem, subIndex) =>
                             subItem.path ? (
@@ -468,7 +608,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           </nav>
         </ScrollArea>
       </aside>
-    </>
+    </TooltipProvider>
   );
 }
 

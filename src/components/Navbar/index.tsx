@@ -19,14 +19,14 @@ export default function Navbar() {
   const getLeftMargin = () => {
     if (isSalesPipelinePage && isMainSidebarCollapsed) {
       // Collapsed main sidebar (64px) + sub-sidebar (240px) = 304px
-      return 'ml-48';
+      return 'lg:ml-48';
     }
     return 'ml-0';
   };
 
   return (
     <div
-      className={`h-12 flex items-center justify-between bg-white px-16 transition-all duration-300 shadow-xs`}
+      className={`h-12 flex items-center justify-between bg-white px-3 lg:px-16 transition-all duration-300 shadow-xs`}
     >
       {/* Search Bar */}
       <div className={`flex-1 max-w-xs relative ${getLeftMargin()}`}>
