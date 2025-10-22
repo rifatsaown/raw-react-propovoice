@@ -31,12 +31,17 @@ import { loadSalesPipelineData } from './api/mockApi';
 import { PipelineSubSidebar } from './components/PipelineSubSidebar';
 import type { Columns, Task, TaskMovement } from './types';
 import { CalendarView, ListView, PipelineView } from './views';
+import AddStageModal from './views/AddStageModal';
 
 // View types
 type ViewType = 'pipeline' | 'list' | 'calendar';
 
 export default function SelesPipeline() {
-  const [columns, setColumns] = useState<Columns>({}); // State to track current column data
+  const [columns, setColumns] = useState<{ open: Columns; closed: Columns }>({
+    open: {},
+    closed: {},
+  }); // State to track current column data
+  const [showAddStageModal, setShowAddStageModal] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null); // State to track which task is currently being dragged
   // const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -47,6 +52,14 @@ export default function SelesPipeline() {
   // Track if the columns were actually changed by a user action
   const columnsChanged = useRef<boolean>(false);
   const lastChangedTask = useRef<TaskMovement | null>(null);
+  // Track the original container where the drag started
+  const draggedFromContainer = useRef<{
+    section: 'open' | 'closed';
+    stage: string;
+  } | null>(null);
+  // Track if we're currently processing a drag operation
+  const isDragging = useRef<boolean>(false);
+  const lastDragTime = useRef<number>(0);
 
   // Redux hooks for sidebar management
   const dispatch = useAppDispatch();
@@ -141,230 +154,222 @@ export default function SelesPipeline() {
 
   // Helper function to find which column contains a specific task ID
   // Returns the column key (e.g., "QUALIFICATION", "PROPOSAL", etc.)
-  const findContainer = (id: string): string | undefined => {
-    // If the ID is a column name, return it directly
-    if (id in columns) return id;
-
-    // Otherwise, search through all columns to find which one contains the task
-    const container = Object.keys(columns).find((key) =>
-      columns[key].find((item: Task) => item.id === id)
-    );
-
-    return container;
+  const findContainer = (
+    id: string
+  ): { section: 'open' | 'closed'; stage: string } | undefined => {
+    for (const section of ['open', 'closed'] as const) {
+      for (const stage of Object.keys(columns[section])) {
+        // If hovering over the column itself
+        if (id === stage) {
+          return { section, stage };
+        }
+        // If hovering over a task inside the column
+        if (columns[section][stage].some((item: Task) => item.id === id)) {
+          return { section, stage };
+        }
+      }
+    }
+    return undefined;
   };
 
   // Helper function to find a task object by its ID
   const findTask = (id: string): Task | undefined => {
-    const container = findContainer(id);
-    if (!container) return undefined;
-
-    return columns[container].find((item: Task) => item.id === id);
+    const found = findContainer(id);
+    if (!found) return undefined;
+    return columns[found.section][found.stage].find(
+      (item: Task) => item.id === id
+    );
   };
 
   // Event handler for when a drag operation starts
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
+    const activeId = active.id as string;
+
     // Store the ID of the task being dragged
-    setActiveId(active.id as string);
+    setActiveId(activeId);
+    isDragging.current = true;
+
+    // Store where the drag started from
+    const container = findContainer(activeId);
+    if (container) {
+      draggedFromContainer.current = container;
+    }
   };
 
   // Event handler for when a dragged item is moved over a droppable area
-  // This handles moving tasks between different columns
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-
-    // If not over a droppable area, do nothing
-    if (!over) return;
-
-    // Get the source and destination columns
-    const activeContainer = findContainer(active.id as string);
-    const overContainer = findContainer(over.id as string);
-
-    // If either container is not found or they're the same, do nothing
-    if (
-      !activeContainer ||
-      !overContainer ||
-      activeContainer === overContainer
-    ) {
-      return;
-    }
-
-    // Update the columns state to move the task from one column to another
-    setColumns((prev) => {
-      const activeItems = prev[activeContainer];
-      const overItems = prev[overContainer];
-
-      // Find the index of the dragged item in its original column
-      const activeIndex = activeItems.findIndex(
-        (item: Task) => item.id === active.id
-      );
-
-      // Find the index of the item being hovered over in the destination column
-      const overIndex = overItems.findIndex(
-        (item: Task) => item.id === over.id
-      );
-
-      let newIndex;
-      if (over.id in prev) {
-        // If hovering over the column itself (not a specific task)
-        // Add the task to the end of the column
-        newIndex = overItems.length;
-      } else {
-        // If hovering over a specific task, insert at that position
-        newIndex = overIndex >= 0 ? overIndex : overItems.length;
-      }
-
-      // Store the task movement information for logging
-      lastChangedTask.current = {
-        taskId: active.id as string,
-        fromColumn: activeContainer,
-        toColumn: overContainer,
-        position: newIndex,
-      };
-
-      // Set the flag to indicate columns were changed by user action
-      columnsChanged.current = true;
-
-      // Create and return the new state with the task moved to the new column
-      return {
-        ...prev,
-        [activeContainer]: [
-          ...prev[activeContainer].filter(
-            (item: Task) => item.id !== active.id
-          ),
-        ],
-        [overContainer]: [
-          ...prev[overContainer].slice(0, newIndex),
-          prev[activeContainer][activeIndex],
-          ...prev[overContainer].slice(newIndex, prev[overContainer].length),
-        ],
-      };
-    });
+  // This does NOT update state - only visual feedback
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleDragOver = (_event: DragOverEvent) => {
+    // Don't update state here to prevent duplications
+    // The actual move will happen in handleDragEnd
   };
 
   // Event handler for when a drag operation ends
-  // This handles reordering tasks within the same column
+  // This handles ALL moves - both within same column and between columns
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    // If not dropped on a valid target, reset active ID and do nothing
+    // Prevent duplicate calls
+    const now = Date.now();
+    if (now - lastDragTime.current < 100) {
+      console.log('Duplicate dragEnd call prevented');
+      return;
+    }
+    lastDragTime.current = now;
+
+    // Reset the dragged item state
+    setActiveId(null);
+    isDragging.current = false;
+    const fromContainer = draggedFromContainer.current;
+    draggedFromContainer.current = null;
+
+    // If not dropped on a valid target, do nothing
     if (!over) {
-      setActiveId(null);
       return;
     }
 
-    // Get the source and destination columns
-    const activeContainer = findContainer(active.id as string);
-    const overContainer = findContainer(over.id as string);
+    const activeId = active.id as string;
+    const overId = over.id as string;
 
-    // If either container is not found, reset active ID and do nothing
-    if (!activeContainer || !overContainer) {
-      setActiveId(null);
+    // Find where we started and where we ended
+    const overContainer = findContainer(overId);
+
+    if (!fromContainer || !overContainer) {
       return;
     }
 
     // If moving between different columns
-    if (activeContainer !== overContainer) {
-      // Find the indices
-      const activeIndex = columns[activeContainer].findIndex(
-        (item: Task) => item.id === active.id
-      );
+    if (
+      fromContainer.section !== overContainer.section ||
+      fromContainer.stage !== overContainer.stage
+    ) {
+      setColumns((prev) => {
+        // Create deep copies to avoid mutations
+        const newColumns = {
+          open: { ...prev.open },
+          closed: { ...prev.closed },
+        };
 
-      const overIndex =
-        over.id in columns
-          ? columns[overContainer].length // If dropping on a column
-          : columns[overContainer].findIndex(
-              (item: Task) => item.id === over.id
-            ); // If dropping on an item
+        // Deep copy the arrays for the affected sections
+        newColumns[fromContainer.section] = {
+          ...newColumns[fromContainer.section],
+          [fromContainer.stage]: [
+            ...prev[fromContainer.section][fromContainer.stage],
+          ],
+        };
+        newColumns[overContainer.section] = {
+          ...newColumns[overContainer.section],
+          [overContainer.stage]: [
+            ...prev[overContainer.section][overContainer.stage],
+          ],
+        };
 
-      const newPosition =
-        overIndex >= 0 ? overIndex : columns[overContainer].length;
+        const fromItems =
+          newColumns[fromContainer.section][fromContainer.stage];
+        const toItems = newColumns[overContainer.section][overContainer.stage];
 
-      // Create the new state
-      const newItems = { ...columns };
-      // Remove from the source column
-      newItems[activeContainer] = newItems[activeContainer].filter(
-        (item: Task) => item.id !== active.id
-      );
-      // Add to the destination column
-      const itemToMove = columns[activeContainer][activeIndex];
-      newItems[overContainer] = [
-        ...newItems[overContainer].slice(0, newPosition),
-        itemToMove,
-        ...newItems[overContainer].slice(newPosition),
-      ];
+        const fromIndex = fromItems.findIndex(
+          (item: Task) => item.id === activeId
+        );
 
-      // Store the task movement information for logging
-      lastChangedTask.current = {
-        taskId: active.id as string,
-        fromColumn: activeContainer,
-        toColumn: overContainer,
-        position: newPosition,
-      };
+        if (fromIndex === -1) {
+          console.warn(
+            'Item not found in source column - may have already been moved'
+          );
+          return prev;
+        }
 
-      // Set the flag to indicate columns were changed by user action
-      columnsChanged.current = true;
+        // Remove from source
+        const [movedItem] = fromItems.splice(fromIndex, 1);
 
-      // Update the state
-      setColumns(newItems);
+        // Check if item already exists in destination to prevent duplication
+        const existingIndex = toItems.findIndex(
+          (item: Task) => item.id === activeId
+        );
+        if (existingIndex !== -1) {
+          console.warn(
+            'Item already exists in destination - removing duplicate'
+          );
+          toItems.splice(existingIndex, 1);
+        }
+
+        // Find insertion point in destination
+        const toIndex = toItems.findIndex((item: Task) => item.id === overId);
+
+        let insertIndex: number;
+        if (overId in newColumns[overContainer.section]) {
+          // Dropped on column header, add to end
+          insertIndex = toItems.length;
+        } else {
+          // Dropped on a task, insert at that position
+          insertIndex = toIndex >= 0 ? toIndex : toItems.length;
+        }
+
+        // Insert at destination
+        toItems.splice(insertIndex, 0, movedItem);
+
+        console.log(
+          `Moved ${activeId} from ${fromContainer.stage} (${fromItems.length} items) to ${overContainer.stage} (${toItems.length} items)`
+        );
+
+        // Track the change
+        lastChangedTask.current = {
+          taskId: activeId,
+          fromColumn: fromContainer.stage,
+          toColumn: overContainer.stage,
+          position: insertIndex,
+        };
+        columnsChanged.current = true;
+
+        return newColumns;
+      });
     }
     // If reordering within the same column
     else {
-      const activeIndex = columns[activeContainer].findIndex(
-        (item: Task) => item.id === active.id
-      );
+      const section = fromContainer.section;
+      const stage = fromContainer.stage;
 
-      const overIndex = columns[overContainer].findIndex(
-        (item: Task) => item.id === over.id
-      );
+      setColumns((prev) => {
+        const items = [...prev[section][stage]];
+        const activeIndex = items.findIndex(
+          (item: Task) => item.id === activeId
+        );
+        const overIndex = items.findIndex((item: Task) => item.id === overId);
 
-      // If the position changed, update the order within the column
-      if (activeIndex !== overIndex) {
-        // Store the task movement information for logging
+        if (
+          activeIndex === -1 ||
+          overIndex === -1 ||
+          activeIndex === overIndex
+        ) {
+          return prev;
+        }
+
+        // Use arrayMove for same-column reordering
+        const reorderedItems = arrayMove(items, activeIndex, overIndex);
+
         lastChangedTask.current = {
-          taskId: active.id as string,
-          fromColumn: activeContainer,
-          toColumn: overContainer,
+          taskId: activeId,
+          fromColumn: stage,
+          toColumn: stage,
           position: overIndex,
         };
-
-        // Set the flag to indicate columns were changed by user action
         columnsChanged.current = true;
 
-        // Create the new state
-        const newItems = { ...columns };
-        newItems[overContainer] = arrayMove(
-          [...columns[overContainer]],
-          activeIndex,
-          overIndex
-        );
-
-        // Update the state
-        setColumns(newItems);
-      }
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            [stage]: reorderedItems,
+          },
+        };
+      });
     }
-    // Reset the active ID
-    setActiveId(null);
   };
 
   // Handler to add a new stage (column) to the right side
   const handleAddStage = () => {
-    const stageNameRaw = window.prompt('Enter new stage name');
-    const stageName = stageNameRaw ? stageNameRaw.trim() : '';
-    if (!stageName) return;
-
-    // Prevent duplicate keys (case-sensitive check to keep it simple)
-    if (stageName in columns) {
-      alert('A stage with this name already exists.');
-      return;
-    }
-
-    setColumns((prev) => {
-      const next = { ...prev, [stageName]: [] };
-      // Mark as changed so the mock API runs
-      columnsChanged.current = true;
-      return next;
-    });
+    setShowAddStageModal(true);
   };
 
   // Show loading state
@@ -786,7 +791,55 @@ export default function SelesPipeline() {
           />
         )}
 
-        {currentView === 'list' && <ListView columns={columns} />}
+        <AddStageModal
+          open={showAddStageModal}
+          onClose={() => setShowAddStageModal(false)}
+          stages={{
+            open: Object.keys(columns.open),
+            closed: Object.keys(columns.closed),
+          }}
+          onAddStage={(section, stageName) => {
+            setColumns((prev) => {
+              if (stageName in prev[section]) return prev;
+              return {
+                ...prev,
+                [section]: {
+                  ...prev[section],
+                  [stageName]: [],
+                },
+              };
+            });
+          }}
+          onRemoveStage={(section, stageName) => {
+            setColumns((prev) => {
+              const nextSection = { ...prev[section] };
+              // Move tasks out? For now, discard tasks when removing stage (mock behavior)
+              delete nextSection[stageName];
+              return { ...prev, [section]: nextSection };
+            });
+          }}
+          onReorderStages={(section, reorderedStages) => {
+            setColumns((prev) => {
+              // Get the current section data
+              const currentSection = prev[section];
+              // Create a new section object with reordered keys
+              const reorderedSection: Columns = {};
+              reorderedStages.forEach((stageName) => {
+                if (currentSection[stageName]) {
+                  reorderedSection[stageName] = currentSection[stageName];
+                }
+              });
+              return {
+                ...prev,
+                [section]: reorderedSection,
+              };
+            });
+          }}
+        />
+
+        {currentView === 'list' && (
+          <ListView columns={{ ...columns.open, ...columns.closed }} />
+        )}
 
         {currentView === 'calendar' && <CalendarView />}
       </main>

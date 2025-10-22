@@ -38,6 +38,11 @@ export interface Columns {
   [key: string]: Task[];
 }
 
+export interface PipelineColumns {
+  open: Columns;
+  closed: Columns;
+}
+
 export interface TaskMovement {
   taskId: string;
   fromColumn: string;
@@ -46,7 +51,7 @@ export interface TaskMovement {
 }
 
 export interface PipelineViewProps {
-  columns: Columns;
+  columns: PipelineColumns;
   activeId: string | null;
   onDragStart: (event: DragStartEvent) => void;
   onDragOver: (event: DragOverEvent) => void;

@@ -1,111 +1,115 @@
 {
-  "Qualified": [
-    {
-      "id": "task1",
-      "title": "Tazkia Foundation Onboard System Development",
-      "status": "COLD",
-      "daysAgo": 20,
-      "clientAvatar": null,
-      "dueDate": "2025-02",
-      "industry": ["webdesign", "Design"],
-      "design": true,
-      "priority": "High",
-      "team": [1, 2, 3]
-    }
-  ],
-  "Need analysis": [
-    {
-      "id": "task2",
-      "title": "Tazkia Foundation Onboard Process Automation and Integration",
-      "status": "COLD",
-      "daysAgo": 20,
-      "client": "Nasir Uddin",
-      "clientAvatar": null,
-      "projectedValue": 50000,
-      "probability": 50,
-      "priority": "High",
-      "team": [1, 2, 3]
-    },
-    {
-      "id": "task3",
-      "title": "Tazkia Foundation Onboard CRM System Development",
-      "status": "WARM",
-      "daysAgo": 20,
-      "client": "Nasir Uddin",
-      "clientAvatar": null,
-      "projectedValue": 50000,
-      "probability": 65,
-      "industry": ["Telehealth"],
-      "priority": "High",
-      "team": [1, 2, 3]
-    }
-  ],
-  "Proposal": [
-    {
-      "id": "task4",
-      "title": "Assunnah Foundation Onboard System Development",
-      "status": "WARM",
-      "daysAgo": 20,
-      "client": "Nasir Uddin",
-      "clientAvatar": null,
-      "projectedValue": 50000,
-      "probability": 25,
-      "priority": "High",
-      "team": [1, 2, 3]
-    },
-    {
-      "id": "task5",
-      "title": "Assunnah Foundation Onboard Process Automation and Integration",
-      "status": "HOT",
-      "daysAgo": 20,
-      "client": "Nasir Uddin",
-      "clientAvatar": null,
-      "projectedValue": 50000,
-      "probability": 25,
-      "industry": ["Telehealth"],
-      "priority": "High",
-      "team": [1, 2, 3]
-    },
-    {
-      "id": "task8",
-      "title": "Assunnah Foundation Onboard CRM System Development",
-      "status": "HOT",
-      "daysAgo": 20,
-      "client": "Nasir Uddin",
-      "clientAvatar": null,
-      "projectedValue": 50000,
-      "probability": 25,
-      "industry": ["Telehealth"],
-      "priority": "High",
-      "team": [1, 2, 3]
-    }
-  ],
-  "Deal Own": [
-    {
-      "id": "task6",
-      "title": "Assunnah Foundation Onboard System Development",
-      "status": "WARM",
-      "daysAgo": 20,
-      "client": "Nasir Uddin",
-      "clientAvatar": null,
-      "projectedValue": 50000,
-      "probability": 25,
-      "priority": "High",
-      "team": [1, 2, 3]
-    }
-  ],
-  "Deal Lost": [
-    {
-      "id": "task7",
-      "title": "Assunnah Foundation Onboard CRM System Development",
-      "status": "COLD",
-      "daysAgo": 10,
-      "client": "Nasir Uddin",
-      "clientAvatar": null,
-      "projectedValue": 50000,
-      "probability": 25,
-      "priority": "High",
-      "team": [1, 2, 3]
-    }
-  ]
+  "open": {
+    "Qualified": [
+      {
+        "id": "task1",
+        "title": "Tazkia Foundation Onboard System Development",
+        "status": "COLD",
+        "daysAgo": 20,
+        "clientAvatar": null,
+        "dueDate": "2025-02",
+        "industry": ["webdesign", "Design"],
+        "design": true,
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ],
+    "Need analysis": [
+      {
+        "id": "task2",
+        "title": "Tazkia Foundation Onboard Process Automation and Integration",
+        "status": "COLD",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 50,
+        "priority": "High",
+        "team": [1, 2, 3]
+      },
+      {
+        "id": "task3",
+        "title": "Tazkia Foundation Onboard CRM System Development",
+        "status": "WARM",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 65,
+        "industry": ["Telehealth"],
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ],
+    "Proposal": [
+      {
+        "id": "task4",
+        "title": "Assunnah Foundation Onboard System Development",
+        "status": "WARM",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "priority": "High",
+        "team": [1, 2, 3]
+      },
+      {
+        "id": "task5",
+        "title": "Assunnah Foundation Onboard Process Automation and Integration",
+        "status": "HOT",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "industry": ["Telehealth"],
+        "priority": "High",
+        "team": [1, 2, 3]
+      },
+      {
+        "id": "task8",
+        "title": "Assunnah Foundation Onboard CRM System Development",
+        "status": "HOT",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "industry": ["Telehealth"],
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ]
+  },
+  "closed": {
+    "Deal Own": [
+      {
+        "id": "task6",
+        "title": "Assunnah Foundation Onboard System Development",
+        "status": "WARM",
+        "daysAgo": 20,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ],
+    "Deal Lost": [
+      {
+        "id": "task7",
+        "title": "Assunnah Foundation Onboard CRM System Development",
+        "status": "COLD",
+        "daysAgo": 10,
+        "client": "Nasir Uddin",
+        "clientAvatar": null,
+        "projectedValue": 50000,
+        "probability": 25,
+        "priority": "High",
+        "team": [1, 2, 3]
+      }
+    ]
+  }
 }
