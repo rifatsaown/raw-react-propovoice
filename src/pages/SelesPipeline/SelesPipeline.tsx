@@ -1,6 +1,7 @@
 import { AlignStart2Icon } from '@/components/Icons';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { Input } from '@/components/ui/input';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { setCollapsed } from '@/store/sidebarSlice';
 import type {
@@ -10,6 +11,7 @@ import type {
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import {
+  ArrowUpNarrowWide,
   Calendar,
   Calendar as CalendarIcon,
   ChevronDown,
@@ -18,6 +20,7 @@ import {
   Menu,
   Plus,
   Rows3,
+  Search,
   Settings,
   User,
   Users,
@@ -605,8 +608,24 @@ export default function SelesPipeline() {
               </Button>
             </ButtonGroup>
           </div>
+
           <div className="flex items-center gap-2 overflow-hidden relative w-full lg:w-auto">
             {/* More Filters Button */}
+
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#667085] pointer-events-none" />
+              <Input placeholder="Search Deals" className="pl-10"></Input>
+            </div>
+            <div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-[#344054] font-medium rounded-lg"
+              >
+                <ArrowUpNarrowWide className="w-4 h-4" color="#344054" />
+                <span className="hidden sm:inline">Sort By</span>
+              </Button>
+            </div>
             <div
               className={`transition-all duration-500 ease-in-out flex-shrink-0 ${
                 !showFilterButtons

@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ArrowUpNarrowWide,
   BriefcaseBusiness,
@@ -18,8 +18,13 @@ import {
   User,
   Users,
 } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ContactBookHeader() {
+  const [activeView, setActiveView] = useState<
+    'contact' | 'organization' | 'groups'
+  >('contact');
+
   return (
     <div className="w-full py-4 flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3 md:gap-0">
@@ -30,25 +35,44 @@ export default function ContactBookHeader() {
           <ChevronDown className="w-4 h-4" />
         </Button>
       </div>
-      {/* Title and Tabs */}
+      {/* Title and Button Group */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        {/* Tabs */}
-        <Tabs defaultValue="contact" className="w-full md:w-auto">
-          <TabsList className="h-8 w-full md:w-auto overflow-x-auto flex-nowrap">
-            <TabsTrigger value="contact" className="gap-1 text-sm">
-              <Contact className="w-4 h-4" />
-              Contact
-            </TabsTrigger>
-            <TabsTrigger value="organization" className="gap-1 text-sm">
-              <BriefcaseBusiness className="w-4 h-4" />
-              Organization
-            </TabsTrigger>
-            <TabsTrigger value="groups" className="gap-1 text-sm">
-              <Users className="w-4 h-4" />
-              Contact Groups
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {/* Button Group */}
+        <ButtonGroup className="w-full md:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveView('contact')}
+            className={`gap-1 text-sm ${
+              activeView === 'contact' ? 'bg-gray-100' : ''
+            }`}
+          >
+            <Contact className="w-4 h-4" />
+            Contact
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveView('organization')}
+            className={`gap-1 text-sm ${
+              activeView === 'organization' ? 'bg-gray-100' : ''
+            }`}
+          >
+            <BriefcaseBusiness className="w-4 h-4" />
+            Organization
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveView('groups')}
+            className={`gap-1 text-sm ${
+              activeView === 'groups' ? 'bg-gray-100' : ''
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            Contact Groups
+          </Button>
+        </ButtonGroup>
         <div className="w-full md:w-auto flex flex-wrap items-center gap-2">
           <div className="w-full md:w-auto flex-1 md:flex-initial max-w-none md:max-w-xs relative">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
