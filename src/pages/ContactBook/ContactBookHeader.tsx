@@ -29,7 +29,7 @@ export default function ContactBookHeader() {
     <div className="w-full py-4 flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3 md:gap-0">
         <h2 className="text-lg md:text-xl font-semibold">Contact Book</h2>
-        <Button className="h-10 gap-2 bg-[#009B6A] hover:bg-green-700 rounded-[8px] w-full sm:w-auto">
+        <Button className="h-10 gap-2 bg-primary hover:bg-primary-hover rounded-[8px] w-full sm:w-auto">
           <Plus className="w-4 h-4" />
           Create New
           <ChevronDown className="w-4 h-4" />

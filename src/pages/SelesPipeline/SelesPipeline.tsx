@@ -377,7 +377,7 @@ export default function SelesPipeline() {
     return (
       <main className="min-h-screen p-4 sm:p-6 md:px-8 lg:px-12 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7F56D9] mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">Loading sales pipeline...</p>
         </div>
       </main>
@@ -552,7 +552,7 @@ export default function SelesPipeline() {
             <Button
               variant="default"
               onClick={() => {}}
-              className="px-3 py-2 gap-1 rounded-lg bg-[#7F56D9] text-white text-sm font-semibold shadow-[0px_1px_2px_rgba(16,24,40,0.05),_inset_0px_0px_0px_1px_rgba(16,24,40,0.18),_inset_0px_-2px_0px_rgba(16,24,40,0.05)]"
+              className="px-3 py-2 gap-1 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold shadow-[0px_1px_2px_rgba(16,24,40,0.05),_inset_0px_0px_0px_1px_rgba(16,24,40,0.18),_inset_0px_-2px_0px_rgba(16,24,40,0.05)]"
             >
               <Plus strokeWidth={3} className="w-5 h-5 text-white" />
               Create Deal

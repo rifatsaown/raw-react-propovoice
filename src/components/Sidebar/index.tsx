@@ -205,7 +205,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const getBadgeColorClass = (title: string) => {
     switch (title.toLowerCase()) {
       case 'inbox':
-        return 'border-[#009B6A] bg-[#EBFEF5] text-[#067647]';
+        return 'border-primary bg-green-50 text-green-800';
       case 'request':
         return 'border-[#F9DBAF] bg-[#FEF6EE] text-[#B93815]';
       default:

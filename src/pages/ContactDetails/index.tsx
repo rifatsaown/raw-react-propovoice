@@ -191,7 +191,7 @@ export default function ContactDetails() {
       <Suspense fallback={<TabContentLoader />}>
         <div className="p-4 sm:p-6 min-h-screen lg:mx-10">
           <div className="max-w-[1400px] mx-auto">
-          <TabComponent contact={mockContact} />
+            <TabComponent contact={mockContact} />
           </div>
         </div>
       </Suspense>
@@ -252,7 +252,7 @@ export default function ContactDetails() {
                       <span className="ml-1">
                         <Badge
                           className="rounded-full px-2 py-0.5 text-xs sm:text-sm font-semibold 
-                            bg-[#E6F7F0] text-[#009B6A] border-none shadow-none h-5 sm:h-6 
+                            bg-green-50 text-primary border-none shadow-none h-5 sm:h-6 
                             flex items-center justify-center min-w-[20px]"
                           variant="secondary"
                         >

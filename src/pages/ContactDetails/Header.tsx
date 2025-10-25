@@ -66,7 +66,7 @@ export default function ContactDetailsHeader({
               <h1 className="font-semibold text-base sm:text-lg text-gray-800 truncate">
                 {contact.name}
               </h1>
-              <Badge className="bg-[#009B6A] text-white font-medium text-xs sm:text-sm w-fit shrink-0">
+              <Badge className="bg-primary text-white font-medium text-xs sm:text-sm w-fit shrink-0">
                 {contact.type}
               </Badge>
             </div>
@@ -80,7 +80,7 @@ export default function ContactDetailsHeader({
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap w-full sm:w-auto justify-between sm:justify-end overflow-x-auto">
           {/* Primary Action - Send Mail */}
           <Button
-            className="h-9 sm:h-10 gap-1 sm:gap-2 bg-[#009B6A] hover:bg-green-700 rounded-[8px] text-xs sm:text-sm flex-1 sm:flex-none min-w-[100px] sm:min-w-[120px]"
+            className="h-9 sm:h-10 gap-1 sm:gap-2 bg-primary hover:bg-primary-hover rounded-[8px] text-xs sm:text-sm flex-1 sm:flex-none min-w-[100px] sm:min-w-[120px]"
             size="sm"
           >
             <MailPlus className="w-3 h-3 sm:w-4 sm:h-4" />

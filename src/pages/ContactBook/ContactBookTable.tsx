@@ -35,7 +35,7 @@ import { useNavigate } from 'react-router-dom';
 function getContactTypeStyle(type: string): string {
   switch (type) {
     case 'Client':
-      return 'bg-[#009B6A]';
+      return 'bg-primary';
     case 'Lead':
       return 'bg-[#F4A462]';
     case 'Prospect':
@@ -150,7 +150,7 @@ export default function ContactTable() {
             <div className="flex items-center gap-3">
               {/* Selection Counter */}
               <div className="flex items-center gap-2 px-4 py-2">
-                <Badge className="bg-[#009B6A] text-white font-semibold rounded-full flex items-center justify-center border-none pb-1 hover:bg-[#009B6A]">
+                <Badge className="bg-primary text-white font-semibold rounded-full flex items-center justify-center border-none pb-1 hover:bg-primary">
                   {selectedRows.length}
                 </Badge>
                 <span className="text-sm font-normal whitespace-nowrap">
