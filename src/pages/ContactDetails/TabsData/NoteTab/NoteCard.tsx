@@ -59,7 +59,7 @@ export default function NoteCard({ note }: { note: NoteItem }) {
             <p className="mt-1 text-sm leading-6 text-[#3F3F46]">
               {displayText.split(/(@[A-Za-z0-9_]+)/g).map((chunk, i) =>
                 chunk.startsWith('@') ? (
-                  <span key={i} className="text-[#009B6A] font-medium">
+                  <span key={i} className="text-primary font-medium">
                     {chunk}
                   </span>
                 ) : (

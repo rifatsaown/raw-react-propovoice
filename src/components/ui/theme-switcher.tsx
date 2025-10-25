@@ -1,12 +1,12 @@
-import * as React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Paintbrush } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { Paintbrush } from 'lucide-react';
+import * as React from 'react';
 
 type ThemeColor = {
   name: string;
@@ -15,38 +15,70 @@ type ThemeColor = {
 };
 
 const themeColors: ThemeColor[] = [
-  { name: "Blue", value: "#1E9EFF", hsl: "206, 100%, 56%" },
-  { name: "Purple", value: "#7C3AED", hsl: "263, 83%, 58%" },
-  { name: "Green", value: "#047857", hsl: "162, 94%, 24%" },
-  { name: "Teal", value: "#0D9488", hsl: "175, 84%, 32%" },
-  { name: "Violet", value: "#6B21A8", hsl: "277, 68%, 39%" },
+  { name: 'Primary', value: '#009B6A', hsl: '158, 100%, 30%' },
+  { name: 'Blue', value: '#1E9EFF', hsl: '206, 100%, 56%' },
+  { name: 'Purple', value: '#7C3AED', hsl: '263, 83%, 58%' },
+  { name: 'Green', value: '#047857', hsl: '162, 94%, 24%' },
+  { name: 'Teal', value: '#0D9488', hsl: '175, 84%, 32%' },
+  { name: 'Violet', value: '#6B21A8', hsl: '277, 68%, 39%' },
 ];
 
+// Function to calculate hover color (darker version)
+const getHoverColor = (hsl: string): string => {
+  // Parse HSL string like "158, 100%, 30%"
+  const [h, s, l] = hsl.split(',').map((v) => v.trim());
+  const hue = h;
+  const saturation = s;
+  const lightness = Math.max(parseInt(l) - 10, 20); // Darker by 10%, minimum 20%
+  return `hsl(${hue}, ${saturation}, ${lightness}%)`;
+};
+
 export function ThemeSwitcher() {
-  const [currentTheme, setCurrentTheme] = React.useState<ThemeColor>(themeColors[0]);
+  const [currentTheme, setCurrentTheme] = React.useState<ThemeColor>(
+    themeColors[0]
+  );
 
   const setThemeColor = (theme: ThemeColor) => {
-    // Update CSS variable
-    document.documentElement.style.setProperty("--primary", theme.hsl);
-    
+    // Update CSS variables
+    document.documentElement.style.setProperty(
+      '--primary',
+      `hsl(${theme.hsl})`
+    );
+    document.documentElement.style.setProperty(
+      '--primary-hover',
+      getHoverColor(theme.hsl)
+    );
+
     // Save to localStorage
-    localStorage.setItem("theme-color", JSON.stringify(theme));
-    
+    localStorage.setItem('theme-color', JSON.stringify(theme));
+
     // Update state
     setCurrentTheme(theme);
   };
 
   // Load saved theme on component mount
   React.useEffect(() => {
-    const savedTheme = localStorage.getItem("theme-color");
+    const savedTheme = localStorage.getItem('theme-color');
     if (savedTheme) {
       try {
         const parsedTheme = JSON.parse(savedTheme) as ThemeColor;
         setCurrentTheme(parsedTheme);
-        document.documentElement.style.setProperty("--primary", parsedTheme.hsl);
+        document.documentElement.style.setProperty(
+          '--primary',
+          `hsl(${parsedTheme.hsl})`
+        );
+        document.documentElement.style.setProperty(
+          '--primary-hover',
+          getHoverColor(parsedTheme.hsl)
+        );
       } catch (e) {
-        console.error("Failed to parse saved theme", e);
+        console.error('Failed to parse saved theme', e);
+        // Fallback to default theme
+        setThemeColor(themeColors[0]);
       }
+    } else {
+      // Set default theme if no saved theme
+      setThemeColor(themeColors[0]);
     }
   }, []);
 
